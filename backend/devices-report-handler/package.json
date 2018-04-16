@@ -1,0 +1,39 @@
+{
+  "name": "@nebulae-tpm/devices-report-handler",
+  "version": "0.0.1",
+  "description": "Handles DeviceGeneralInformationReported events",
+  "main": "server.js",
+  "bin": {
+    "mbe-devices-report-handler": "bin/server.js"
+  },
+  "scripts": {
+    "start": "node bin/server.js",
+    "test": "./node_modules/.bin/mocha --recursive --reporter spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nebulae-tpm/ms-devices-report.git"
+  },
+  "keywords": [
+    "backend",
+    "microservice",
+    "device",
+    "report",
+    "handler"
+  ],
+  "author": "sebastian.molano@nebulae.com.co",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nebulae-tpm/ms-devices-report/issues"
+  },
+  "homepage": "https://github.com/nebulae-tpm/ms-devices-report#readme",
+  "dependencies": {
+    "@nebulae/event-store": "^0.1.0",
+    "mongodb": "^3.0.6",
+    "rxjs": "^5.5.10"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.1.0"
+  }
+}
