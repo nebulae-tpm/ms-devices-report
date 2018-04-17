@@ -1,7 +1,8 @@
 const Rx = require('rxjs');
-const nebulaeES = ('@nebulae/event-store');
+const nebulaeES = require('@nebulae/event-store');
 const Event = nebulaeES.Event;
 const EventStore = nebulaeES.EventStore;
+
 
 let instance;
 
@@ -10,10 +11,10 @@ class DeviceGeneralInformation {
     constructor() {
         this.eventStore = new EventStore(
             {
-                type = process.env.EVENT_STORE_BROKER_TYPE,
-                eventsTopic= process.env.EVENT_STORE_BROKER_EVENTS_TOPIC,
-                brokerUrl= process.env.EVENT_STORE_BROKER_URL,
-                projectId= process.env.EVENT_STORE_BROKER_PROJECT_ID,
+                type: process.env.EVENT_STORE_BROKER_TYPE,
+                eventsTopic: process.env.EVENT_STORE_BROKER_EVENTS_TOPIC,
+                brokerUrl: process.env.EVENT_STORE_BROKER_URL,
+                projectId: process.env.EVENT_STORE_BROKER_PROJECT_ID,
             },
             {
                 type: process.env.EVENT_STORE_STORE_TYPE,
@@ -22,6 +23,8 @@ class DeviceGeneralInformation {
                 aggregatesDbName: process.env.EVENT_STORE_STORE_AGGREGATES_DB_NAME
             }
         );
+
+        this.eventStore.retrieveEvents$()
     }
 
     /**
@@ -37,7 +40,7 @@ class DeviceGeneralInformation {
             data: report,
             user: 'devices-report-receptionist'
         });
-        return this.eventStore.emitEvent$(event);        
+        return this.eventStore.emitEvent$(event);
     }
 }
 

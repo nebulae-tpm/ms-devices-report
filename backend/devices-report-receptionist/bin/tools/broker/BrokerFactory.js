@@ -1,40 +1,34 @@
 'use strict'
 
-let instance = null;
-
 class BrokerFactory {
     /**
      * Factory instance and config
      */
-    constructor() {
-        switch (process.env.BROKER_TYPE) {
+    constructor(type) {
+        switch (type) {
             case 'PUBSUB':
                 const PubSubBroker = require('./PubSubBroker');
                 this.broker = new PubSubBroker({
-                    replyTimeOut: process.env.REPLY_TIMEOUT || 2000,
+                    topic: process.env.IOT_BROKER_TOPIC
                 });
                 break;
             case 'MQTT':
                 const MqttBroker = require('./MqttBroker');
                 this.broker = new MqttBroker({
-                    mqttServerUrl: process.env.MQTT_SERVER_URL,
-                    replyTimeout: process.env.REPLY_TIMEOUT || 2000
+                    url: process.env.IOT_BROKER_URL,
+                    topic: process.env.IOT_BROKER_TOPIC
                 });
                 break;
+            default:
+                throw new Error(`invalid Broker type @BrokerFactory: ${type}`);
         }
     }
     /**
      * Get the broker instance
      */
     getBroker() {
-        return broker
+        return this.broker
     }
 }
 
-module.exports = () => {
-    if (!instance) {
-        instance = new BrokerFactory();
-        console.log('BrokerFactory instance created');
-    }
-    return instance.broker;
-};
+module.exports = BrokerFactory;
