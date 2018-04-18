@@ -4,8 +4,10 @@ const Rx = require('rxjs');
 const uuidv4 = require('uuid/v4');
 const expect = require('chai').expect;
 
+
 //LIBS FOR TESTING
 const deviceGeneralInformation = require('../../bin/domain/DeviceGeneralInformation')();
+const DeviceGeneralInformationFormatter = require('../../bin/domain/DeviceGeneralInformationFormatter');
 
 //GLOABAL VARS to use between tests
 let compressedReport =
@@ -213,9 +215,9 @@ let uncompressedReport =
     };
 
 describe('BACKEND: devices-report-handler', function () {
-    describe('Domain: DeviceGeneralInformation', function () {
+    describe('Domain: DeviceGeneralInformationFormatter', function () {
         it('formatReport$', function (done) {
-            deviceGeneralInformation.formatReport$(compressedReport)
+            DeviceGeneralInformationFormatter.formatReport$(compressedReport)
                 .subscribe(
                     (formatted) => {
                         assert.deepEqual(JSON.parse(JSON.stringify(formatted)), uncompressedReport);

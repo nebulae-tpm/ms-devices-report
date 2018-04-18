@@ -1,6 +1,16 @@
 const Rx = require('rxjs');
 
-class DeviceGeneralInformation {
+class DeviceGeneralInformationFormatter {
+
+
+    /**
+     * Decompress DeviceGeneralInformation report and format it to the standard format
+     * @param {Object} compressedReport 
+     */
+    static formatReport$(compressedReport) {
+        return Rx.Observable.of(compressedReport)
+            .map(unformatted => this.formatIncomingReport(unformatted))
+    }
 
     /**
      * Process incoming compressed report from a device and formats to the standard format
@@ -166,4 +176,4 @@ class DeviceGeneralInformation {
 
 }
 
-module.exports = DeviceGeneralInformation;
+module.exports = DeviceGeneralInformationFormatter;
