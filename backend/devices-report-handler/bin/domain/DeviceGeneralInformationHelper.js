@@ -116,6 +116,19 @@ class DeviceGeneralInformation {
                 formatted.state.volumes.push(volume);
             });
         }
+        if (report.events) {
+            formatted.events = [];
+            report.events.forEach(evt => {
+                formatted.events.push(
+                    {
+                        timestamp: evt.t,
+                        type: evt.tp,
+                        value: evt.vl
+                    }
+                );
+            });
+        }
+
         return formatted;
     }
 

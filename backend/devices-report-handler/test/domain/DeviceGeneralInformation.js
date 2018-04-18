@@ -86,15 +86,10 @@ let compressedReport =
             ]
         },
         "events": [
-            /*
-            {"timeStamp": 1523479712.827622, "value": "$GPRMC,,V,,,,,,,,,,N*53", "type": "GPRMC"},
-            {"t": 1523479712.827622, "vl": "$GPRMC,,V,,,,,,,,,,N*53", "tp": "GPRMC"},
-
-            {"timeStamp": 1523479571.524613, "value": 11.95, "type": "lowest_volt"},
-            {"t": 1523479571.524613, "vl": 11.95, "tp": "lowest_volt"},
-
-            {"vl":0.28999999999999998,"t":1523554710.886797,"tp":"alert_volt"},
-            */
+            { "t": 1523479712.827622, "vl": "$GPRMC,,V,,,,,,,,,,N*53", "tp": "GPRMC" },
+            { "t": 1523479571.524613, "vl": 11.95, "tp": "lowest_volt" },
+            { "t": 1523479571.524613, "vl": 11.95, "tp": "highest_volt" },
+            { "t": 1523554710.886797, "vl": 0.28999999999999998, "tp": "alert_volt" },
         ],
         "v": 1
     }
@@ -106,7 +101,7 @@ let uncompressedReport =
         "version": 1,
         "reportVersion": 1,
         "state": {
-            "timeStamp": 1523479439.711107,
+            "timestamp": 1523479439.711107,
             "device": {
                 "temperature": 35,
                 "sn": "sn0001-0001-TEST",
@@ -184,7 +179,13 @@ let uncompressedReport =
                     "unit": "MiB"
                 }
             ]
-        }
+        },
+        "events": [
+            { "timestamp": 1523479712.827622, "value": "$GPRMC,,V,,,,,,,,,,N*53", "type": "GPRMC" },
+            { "timestamp": 1523479571.524613, "value": 11.95, "type": "lowest_volt" },
+            { "timestamp": 1523479571.524613, "value": 11.95, "type": "highest_volt" },
+            { "timestamp": 1523554710.886797, "value": 0.28999999999999998, "type": "alert_volt" },
+        ],
     }
 
 describe('BACKEND: devices-report-handler', function () {
@@ -193,7 +194,7 @@ describe('BACKEND: devices-report-handler', function () {
             deviceGeneralInformation.formatReport$(compressedReport)
                 .subscribe(
                     (formatted) => {
-                        assert.deepEqual(JSON.parse(JSON.stringify(formatted)),uncompressedReport);
+                        assert.deepEqual(JSON.parse(JSON.stringify(formatted)), uncompressedReport);
                     },
                     (error) => {
                         console.error('Failed formatting report', error);

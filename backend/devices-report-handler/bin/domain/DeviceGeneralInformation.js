@@ -53,9 +53,8 @@ class DeviceGeneralInformation {
                         aggregateVersion
                     }
                 ));
-            }
-            )
-
+            })
+            
 
 
             ;
