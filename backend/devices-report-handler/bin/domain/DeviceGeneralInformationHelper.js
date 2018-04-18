@@ -33,7 +33,7 @@ class DeviceGeneralInformation {
             reportVersion,
 
             state: {
-                timeStamp: state.t,
+                timestamp: state.t,
                 device: {
                     temperature: state.gs.temp,
                     sn: state.sDv,

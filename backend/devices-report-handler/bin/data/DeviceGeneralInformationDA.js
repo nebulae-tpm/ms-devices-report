@@ -33,7 +33,7 @@ class DeviceGeneralInformationDA {
             }
         };
         properties.forEach(prop => {
-            update[$set][prop.key] = prop.value;
+            update['$set'][prop.key] = prop.value;
         });
 
         return Rx.Observable.fromPromise(

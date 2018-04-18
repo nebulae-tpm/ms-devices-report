@@ -30,16 +30,19 @@ class DeviceGeneralInformation {
             .map(([evt, report, storedInfo]) => this.findDifferentProperties(evt, report, storedInfo))
             .mergeMap(({ sn, properties, aggregateVersion, aggregateVersionTimestamp }) =>
                 DeviceGeneralInformationDA.updateDeviceGenearlInformation$(sn, properties, aggregateVersion, aggregateVersionTimestamp)
-                    .mergeMap(result => result.modifiedCount > 0
-                        ? Rx.Observable.of({ sn, properties, aggregateVersion, aggregateVersionTimestamp })
-                        : Rx.Observable.throw(
-                            new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${
-                                JSON.stringify({ sn, properties, aggregateVersion, aggregateVersionTimestamp })}`))))
+                    .mergeMap(result => {
+                        return (result.modifiedCount > 0 || result.upsertedCount > 0)
+                            ? Rx.Observable.of({ sn, properties, aggregateVersion, aggregateVersionTimestamp })
+                            : Rx.Observable.throw(
+                                new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${JSON.stringify({ sn, properties, aggregateVersion, aggregateVersionTimestamp })}`));
+                    }))
             .mergeMap(({ sn, properties, aggregateVersion, aggregateVersionTimestamp }) =>
-                Rx.Observable.from(properties)
-                    .map(property => { return { sn, property, aggregateVersion, aggregateVersionTimestamp }; }))
-            .mergeMap(({ sn, property, aggregateVersion, aggregateVersionTimestamp }) =>
-                eventSourcing.eventStore.emitEvent$(new Event(
+                { 
+                    return Rx.Observable.from(properties)
+                    .map(property => { return { sn, property, aggregateVersion, aggregateVersionTimestamp }; });}
+                )
+            .mergeMap(({ sn, property, aggregateVersion, aggregateVersionTimestamp }) => {
+                return eventSourcing.eventStore.emitEvent$(new Event(
                     {
                         eventType: `${camelCase(`Device ${property.key} State Reported`, { pascalCase: true })}`,
                         eventTypeVersion: 1,
@@ -49,7 +52,9 @@ class DeviceGeneralInformation {
                         user: "SYSTEM.DevicesReport.devices-report-handler",
                         aggregateVersion
                     }
-                )))
+                ));
+            }
+            )
 
 
 
