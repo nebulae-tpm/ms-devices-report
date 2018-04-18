@@ -77,30 +77,30 @@ class DeviceGeneralInformation {
         if (formatted.state.mainApp.appVers) {
             const app = formatted.state.mainApp.appVers;
             app.libgestionhardware = app.lGH;
-            app.lGH = undefined;
+            delete app.lGH;
             app.libcontrolregistros = app.lCR;
-            app.lCR = undefined;
+            delete app.lCR;
             app['embedded.libgestionhardware'] = app.elGH;
-            app.elGH = undefined;
+            delete app.elGH;
             app.libcommonentities = app.lCE;
-            app.lCE = undefined;
+            delete app.lCE;
             app.AppUsosTrasnporte = app.aUT;
-            app.aUT = undefined;
+            delete app.aUT;
             app.libcontrolmensajeria = app.lCM;
-            app.lCM = undefined;
+            delete app.lCM;
             app.libparamoperacioncliente = app.lPOC;
-            app.lPOC = undefined;
+            delete app.lPOC;
             app.libcontrolconsecutivos = app.lCC;
-            app.lCC = undefined;
+            delete app.lCC;
 
         }
 
         if (formatted.state.mainApp.appTablesVers) {
             const table = formatted.state.mainApp.appTablesVers;
             table.TablaTrayectos = table.TT;
-            table.TT = undefined;
+            delete table.TT;
             table.ListaNegra = table.LN;
-            table.LN = undefined;
+            delete table.LN;
 
         }
 

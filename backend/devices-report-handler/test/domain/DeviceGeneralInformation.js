@@ -2,12 +2,13 @@
 const assert = require('assert');
 const Rx = require('rxjs');
 const uuidv4 = require('uuid/v4');
+const expect = require('chai').expect;
 
 //LIBS FOR TESTING
 const deviceGeneralInformation = require('../../bin/domain/DeviceGeneralInformation')();
 
 //GLOABAL VARS to use between tests
-let report =
+let compressedReport =
     {
         "state": {
             "uTC": 0,
@@ -99,25 +100,107 @@ let report =
     }
     ;
 
-
-/*
-NOTES:
-before run please start mqtt:
-  docker run -it -p 1883:1883 -p 9001:9001 eclipse-mosquitto  
-*/
-
-describe('Domain: DeviceGeneralInformation', function () {
-    describe('handle DeviceGeneralInformationReported', function () {
-        it('Format original CMD', function (done) {
-            deviceGeneralInformation.formatReport$(JSON.stringify(report))
-            .subscribe(
-                (formatted) => console.log(JSON.stringify(formatted)),
-                (error) => {
-                    console.error('Failed formatting report',error);
-                    return done(error);
+let uncompressedReport =
+    {
+        "timestamp": 1523479439.711107,
+        "version": 1,
+        "reportVersion": 1,
+        "state": {
+            "timeStamp": 1523479439.711107,
+            "device": {
+                "temperature": 35,
+                "sn": "sn0001-0001-TEST",
+                "type": "OMVZ7"
+            },
+            "modem": {
+                "cellid": 19692771,
+                "band": "WCDMA",
+                "mode": "WCDMA",
+                "simStatus": "OK",
+                "simImei": "359072061300642"
+            },
+            "display": {
+                "sn": "sn0001-0001-DISP"
+            },
+            "network": {
+                "interfaces": {
+                    "lo": [
+                        "127.0.0.1/8",
+                        "::1/128"
+                    ],
+                    "eth1": [
+                        "172.28.99.216/28",
+                        "fe80::d82a:bdff:fe31:e408/64"
+                    ],
+                    "eth0": [
+                        "192.168.188.197/24",
+                        "fe80::201:2ff:fe03:405/64"
+                    ]
                 },
-                () => {return done();}
-            );
+                "hostname": "OMVZ7",
+                "mac": "00:01:02:03:04:05",
+                "dns": [
+                    "192.168.188.188"
+                ],
+                "gateway": "192.168.188.188"
+            },
+            "mainApp": {
+                "appVers": {
+                    "libgestionhardware": "15.05.22.01",
+                    "libcontrolregistros": "17.10.31.1",
+                    "embedded.libgestionhardware": "18.02.13.3",
+                    "libcommonentities": "17.12.21.1",
+                    "AppUsosTrasnporte": "18.02.07.1",
+                    "libcontrolmensajeria": "17.10.31.1",
+                    "libparamoperacioncliente": "17.10.27.1",
+                    "libcontrolconsecutivos": "13.07.19.1"
+                },
+                "appTablesVers": {
+                    "TablaTrayectos": "139",
+                    "ListaNegra": "5378.07"
+                },
+                "usosTranspCount": 0,
+                "errsTranspCount": 0
+            },
+            "system": {
+                "cpuStatus": [
+                    8,
+                    18,
+                    21
+                ],
+                "upTime": "15:43:58 up 2 days, 8:39, load average: 0.08, 0.18, 0.21"
+            },
+            "volumes": [
+                {
+                    "current": 456912,
+                    "total": 1026448,
+                    "type": "MEM",
+                    "unit": "KiB"
+                },
+                {
+                    "current": 830,
+                    "total": 7446,
+                    "type": "SD",
+                    "unit": "MiB"
+                }
+            ]
+        }
+    }
+
+describe('BACKEND: devices-report-handler', function () {
+    describe('Domain: DeviceGeneralInformation', function () {
+        it('formatReport$', function (done) {
+            deviceGeneralInformation.formatReport$(compressedReport)
+                .subscribe(
+                    (formatted) => {
+                        assert.deepEqual(JSON.parse(JSON.stringify(formatted)),uncompressedReport);
+                    },
+                    (error) => {
+                        console.error('Failed formatting report', error);
+                        return done(error);
+                    },
+                    () => { return done(); }
+                );
         });
     });
 

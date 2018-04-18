@@ -1,3 +1,5 @@
+'use strict'
+
 const Rx = require('rxjs');
 const Event = require('@nebulae/event-store').Event;
 const Helper = require('./DeviceGeneralInformationHelper');
@@ -14,8 +16,9 @@ class DeviceGeneralInformation{
      * handle DeviceGeneralInformation event
      * @param {Event} event 
      */
-    handleDeviceGeneralInformationReported(event){
+    handleDeviceGeneralInformationReportedEvent$(event){
         console.log(JSON.stringify(event));
+        return this.formatReport$(event.data);
     }
 
     /**
@@ -24,7 +27,6 @@ class DeviceGeneralInformation{
      */
     formatReport$(compressedReport) {
         return Rx.Observable.of(compressedReport)
-            .map(str => JSON.parse(str))
             .map(unformatted => Helper.formatIncomingReport(unformatted))
     }
 
