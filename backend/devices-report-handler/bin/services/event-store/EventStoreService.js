@@ -64,7 +64,7 @@ class EventStoreService {
                 onErrorHandler,
                 onCompleteHandler
             );
-        this.subscriptions.push({ aggregateType, eventType, handlerName: handler.name, subscription });
+        this.subscriptions.push({ aggregateType, eventType, handlerName: handler.fn.name, subscription });
         return { aggregateType, eventType, handlerName: `${handler.obj.name}.${handler.fn.name}` };
     }
 

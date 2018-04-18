@@ -17,17 +17,45 @@ class DeviceGeneralInformation {
     }
 
     /**
-     * handle DeviceGeneralInformation event
+     * handle DeviceGeneralInformation eventcd -
+     * 
      * @param {Event} event 
      */
     handleDeviceGeneralInformationReportedEvent$(event) {
-        //console.log(JSON.stringify(event));   
+        //First lets gather all the needed info: 
+        //  - the incoming event
+        //  - the formatted event data: decompressed
+        //  - the materialized view stored in db
         return Rx.Observable.forkJoin(
             Rx.Observable.of(event),
             this.formatReport$(event.data),
-            DeviceGeneralInformationDA.getDeviceGeneralInformation$(event.aid).map(storedInfo => storedInfo ? storedInfo : {})
-        )
-            .map(([evt, report, storedInfo]) => this.findDifferentProperties(evt, report, storedInfo))
+            DeviceGeneralInformationDA.getDeviceGeneralInformation$(event.aid).map(storedInfo => storedInfo ? storedInfo : {}))
+            //Now lets start the events generators in parrallel:
+            // 1 - Device State reports
+            // 1 - Device Events reports
+            .mergeMap(([evt, report, storedInfo]) =>
+                Rx.Observable.merge(
+                    this.deviceStateEventGenerator$(evt, report, storedInfo),
+                    this.deviceEventsEventGenerator$(evt, report, storedInfo)
+                )
+            )
+            //now we can emit all generated events into the EventStore
+            .mergeMap(event => eventSourcing.eventStore.emitEvent$(event))
+            ;
+    }
+
+
+    /**
+     * Returns an observable that will emit Events related to the Device State
+     * @param {Event} evt the incoming event
+     * @param {*} report the formatted event data: decompressed
+     * @param {*} storedInfo the materialized view stored in db
+     */
+    deviceStateEventGenerator$(evt, report, storedInfo) {
+        return Rx.Observable.of(
+            //we start by getting the list of state difference between the new event and the persisted materialized view
+            this.compareAndGetStateDifferences(evt, report, storedInfo))
+            //then we try to apply all theses changes into the materialized view
             .mergeMap(({ sn, properties, aggregateVersion, aggregateVersionTimestamp }) =>
                 DeviceGeneralInformationDA.updateDeviceGenearlInformation$(sn, properties, aggregateVersion, aggregateVersionTimestamp)
                     .mergeMap(result => {
@@ -36,40 +64,33 @@ class DeviceGeneralInformation {
                             : Rx.Observable.throw(
                                 new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${JSON.stringify({ sn, properties, aggregateVersion, aggregateVersionTimestamp })}`));
                     }))
-            .mergeMap(({ sn, properties, aggregateVersion, aggregateVersionTimestamp }) =>
-                { 
-                    return Rx.Observable.from(properties)
-                    .map(property => { return { sn, property, aggregateVersion, aggregateVersionTimestamp }; });}
-                )
-            .mergeMap(({ sn, property, aggregateVersion, aggregateVersionTimestamp }) => {
-                return eventSourcing.eventStore.emitEvent$(new Event(
+            // now lets split the changed properties and emit them one by one
+            .mergeMap(({ sn, properties, aggregateVersion, aggregateVersionTimestamp }) => {
+                return Rx.Observable.from(properties)
+                    .map(property => { return { sn, property, aggregateVersion, aggregateVersionTimestamp }; });
+            })
+            //now we can create a new Event per changed property
+            .map(({ sn, property, aggregateVersion, aggregateVersionTimestamp }) => {
+                return new Event(
                     {
                         eventType: `${camelCase(`Device ${property.key} State Reported`, { pascalCase: true })}`,
                         eventTypeVersion: 1,
                         aggregateType: 'Device',
                         aggregateId: sn,
                         data: property.value,
-                        user: "SYSTEM.DevicesReport.devices-report-handler",
-                        aggregateVersion
+                        user: "SYSTEM.DevicesReport.devices-report-handler"
                     }
-                ));
+                );
             })
-            
-
-
-            ;
     }
 
     /**
-     * Decompress DeviceGeneralInformation report and format it to the standard format
-     * @param {Object} compressedReport 
+     * Compare state properties diffs and return them 
+     * @param {Event} evt 
+     * @param {*} report 
+     * @param {*} storedInfo 
      */
-    formatReport$(compressedReport) {
-        return Rx.Observable.of(compressedReport)
-            .map(unformatted => Helper.formatIncomingReport(unformatted))
-    }
-
-    findDifferentProperties(evt, report, storedInfo) {
+    compareAndGetStateDifferences(evt, report, storedInfo) {
         const reportTimestamp = report.timestamp;
         delete report.state.timestamp;
         const diffs = [];
@@ -82,6 +103,125 @@ class DeviceGeneralInformation {
     }
 
 
+    /**
+     * Returns an observable that will emit Events related to the Device Events
+     * @param {Event} incomingEvent the incoming event
+     * @param {*} report the formatted event data: decompressed
+     * @param {*} storedInfo the materialized view stored in db
+     */
+    deviceEventsEventGenerator$(incomingEvent, report, storedInfo) {
+        if (!report.events) {
+            return Rx.Observable.empty();
+        }
+        return Rx.Observable.from(report.events)
+            .mergeMap(evt => {
+                switch (evt.type) {
+                    case 'GPRMC':
+                        return this.deviceLocationEventGenerator$(evt, report, storedInfo);
+                    case 'lowest_volt':
+                        return this.deviceLowestVoltageReportedEventGenerator$(evt, report, storedInfo);
+                    case 'highest_volt':
+                        return this.deviceHighestVoltageReportedEventGenerator$(evt, report, storedInfo);
+                    case 'alert_volt':
+                        return this.deviceVoltageAlarmReportedEventGenerator$(evt, report, storedInfo);
+                    default:
+                        return Rx.Observable.empty();
+                }
+            })
+            ;
+    }
+
+    deviceLocationEventGenerator$(evt, report, storedInfo) {
+        return Rx.Observable.empty();
+        // return Rx.Observable.of(evt)
+        // {
+        //     "geojson": {
+        //         "type": "Feature",
+        //             "geometry": {
+        //             "type": "Point",
+        //                 "coordinates": [125.6, 10.1]
+        //         },
+        //     },
+
+        //     "timeStamp": 1523479712.827622,
+        //         "deviceId" : "345678",
+        //             "deviceVer": 1
+
+        // }
+    }
+
+
+
+    /**
+     * Returns an observable that will emit DeviceLowestVoltageReported
+     * @param {*} evt incoming nested event
+     * @param {*} report the formatted event data: decompressed
+     * @param {*} storedInfo the materialized view stored in db
+     */
+    deviceLowestVoltageReportedEventGenerator$(evt, report, storedInfo) {
+        return Rx.Observable.of(evt)
+            .map(evt => {
+                return new Event({
+                    eventType: 'DeviceLowestVoltageReported',
+                    eventTypeVersion: 1,
+                    aggregateType: 'Device',
+                    aggregateId: report.state.device.sn,
+                    data: { voltage: evt.value, timestamp: evt.timestamp },
+                    user: "SYSTEM.DevicesReport.devices-report-handler"
+                });
+            });
+    }
+
+    /**
+     * Returns an observable that will emit DeviceHighestVoltageReported
+     * @param {*} evt incoming nested event
+     * @param {*} report the formatted event data: decompressed
+     * @param {*} storedInfo the materialized view stored in db
+     */
+    deviceHighestVoltageReportedEventGenerator$(evt, report, storedInfo) {
+        return Rx.Observable.of(evt)
+            .map(evt => {
+                return new Event({
+                    eventType: 'DeviceHighestVoltageReported',
+                    eventTypeVersion: 1,
+                    aggregateType: 'Device',
+                    aggregateId: report.state.device.sn,
+                    data: { voltage: evt.value, timestamp: evt.timestamp },
+                    user: "SYSTEM.DevicesReport.devices-report-handler"
+                });
+            });
+    }
+
+    /**
+     * Returns an observable that will emit DeviceHeghestVoltageReported
+     * @param {*} evt incoming nested event
+     * @param {*} report the formatted event data: decompressed
+     * @param {*} storedInfo the materialized view stored in db
+     */
+    deviceVoltageAlarmReportedEventGenerator$(evt, report, storedInfo) {
+        const eventType = (evt.value < 12) ? 'DeviceLowVoltageAlarmReported' : 'DeviceHighVoltageAlarmReported'
+        return Rx.Observable.of(evt)
+            .map(evt => {
+                return new Event({
+                    eventType,
+                    eventTypeVersion: 1,
+                    aggregateType: 'Device',
+                    aggregateId: report.state.device.sn,
+                    data: { voltage: evt.value, timestamp: evt.timestamp },
+                    user: "SYSTEM.DevicesReport.devices-report-handler"
+                });
+            });
+    }
+
+
+    /**
+     * Decompress DeviceGeneralInformation report and format it to the standard format
+     * @param {Object} compressedReport 
+     */
+    formatReport$(compressedReport) {
+        return Rx.Observable.of(compressedReport)
+            .map(unformatted => Helper.formatIncomingReport(unformatted))
+    }
 
 }
 
