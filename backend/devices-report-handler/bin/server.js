@@ -6,12 +6,14 @@ if (process.env.NODE_ENV !== 'production') {
 
 const eventSourcing = require('./tools/EventSourcing')();
 const eventStoreService = require('./services/event-store/EventStoreService')();
+const mongoDB = require('./data/MongoDB')();
 const Rx = require('rxjs');
 
 const start = () => {
     Rx.Observable.concat(
         eventSourcing.eventStore.start$(),
-        eventStoreService.start$()
+        eventStoreService.start$(),
+        mongoDB.start$()
     ).subscribe(
         (evt) => console.log(evt),
         (error) => {

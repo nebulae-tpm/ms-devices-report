@@ -55,15 +55,17 @@ class EventStoreService {
      */
     subscribeEventHandler({ aggregateType, eventType, onErrorHandler, onCompleteHandler }) {
         const handler = this.functionMap[eventType];
+
         const subscription = eventSourcing.eventStore.getEventListener$(aggregateType)
             .filter(evt => evt.et === eventType)
+            .mergeMap(evt => handler.fn.call(handler.obj, evt))
             .subscribe(
-                (evt) => handler(evt),
+                (evt) => console.log(`EventStoreService: ${eventType} process: ${evt}`),
                 onErrorHandler,
                 onCompleteHandler
             );
-        this.subscriptions.push({aggregateType, eventType, handlerName: handler.name, subscription });
-        return { aggregateType, eventType, handlerName: handler.name };
+        this.subscriptions.push({ aggregateType, eventType, handlerName: handler.name, subscription });
+        return { aggregateType, eventType, handlerName: `${handler.obj.name}.${handler.fn.name}` };
     }
 
     /**
@@ -71,7 +73,7 @@ class EventStoreService {
      */
     generateFunctionMap() {
         return {
-            'DeviceGeneralInformationReported': deviceGeneralInformation.handleDeviceGeneralInformationReportedEvent$
+            'DeviceGeneralInformationReported': { fn: deviceGeneralInformation.handleDeviceGeneralInformationReportedEvent$, obj: deviceGeneralInformation }
         };
     }
 
