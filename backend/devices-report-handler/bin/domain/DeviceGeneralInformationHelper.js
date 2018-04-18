@@ -129,6 +129,36 @@ class DeviceGeneralInformation {
             });
         }
 
+
+        // at the present time this event is sent within the state.mainApp
+        // so we need to get the value, remove ir from the state.mainApp and create a event instead
+
+        if (formatted.state.mainApp.usosTranspCount !== undefined) {
+            if (!formatted.events) {
+                formatted.events = [];
+            }
+            formatted.events.push({
+                timestamp: formatted.state.timestamp,
+                value: formatted.state.mainApp.usosTranspCount,
+                type: 'usosTranspCount'
+            });
+            delete formatted.state.mainApp.usosTranspCount;
+
+        }
+        // at the present time this event is sent within the state.mainApp
+        // so we need to get the value, remove ir from the state.mainApp and create a event instead
+        if (formatted.state.mainApp.errsTranspCount !== undefined) {
+            if (!formatted.events) {
+                formatted.events = [];
+            }
+            formatted.events.push({
+                timestamp: formatted.state.timestamp,
+                type: 'errsTranspCount',
+                value: formatted.state.mainApp.errsTranspCount
+            });
+            delete formatted.state.mainApp.errsTranspCount;
+        }
+
         return formatted;
     }
 

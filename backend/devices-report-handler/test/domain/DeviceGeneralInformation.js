@@ -153,9 +153,7 @@ let uncompressedReport =
                 "appTablesVers": {
                     "TablaTrayectos": "139",
                     "ListaNegra": "5378.07"
-                },
-                "usosTranspCount": 0,
-                "errsTranspCount": 0
+                }
             },
             "system": {
                 "cpuStatus": [
@@ -181,12 +179,38 @@ let uncompressedReport =
             ]
         },
         "events": [
-            { "timestamp": 1523479712.827622, "value": "$GPRMC,,V,,,,,,,,,,N*53", "type": "GPRMC" },
-            { "timestamp": 1523479571.524613, "value": 11.95, "type": "lowest_volt" },
-            { "timestamp": 1523479571.524613, "value": 11.95, "type": "highest_volt" },
-            { "timestamp": 1523554710.886797, "value": 0.28999999999999998, "type": "alert_volt" },
-        ],
-    }
+            {
+                "timestamp": 1523479712.827622,
+                "type": "GPRMC",
+                "value": "$GPRMC,,V,,,,,,,,,,N*53"
+            },
+            {
+                "timestamp": 1523479571.524613,
+                "type": "lowest_volt",
+                "value": 11.95
+            },
+            {
+                "timestamp": 1523479571.524613,
+                "type": "highest_volt",
+                "value": 11.95
+            },
+            {
+                "timestamp": 1523554710.886797,
+                "type": "alert_volt",
+                "value": 0.29
+            },
+            {
+                "timestamp": 1523479439.711107,
+                "type": "usosTranspCount",
+                "value": 0                
+            },
+            {
+                "timestamp": 1523479439.711107,
+                "type": "errsTranspCount",
+                "value": 0                
+            }
+        ]
+    };
 
 describe('BACKEND: devices-report-handler', function () {
     describe('Domain: DeviceGeneralInformation', function () {
