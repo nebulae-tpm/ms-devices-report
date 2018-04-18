@@ -12,29 +12,38 @@ class IotService {
         this.broker = new BrockerFactory(process.env.IOT_BROKER_TYPE).getBroker();
     }
 
-    start() {
-        this.subscription = this.broker.getMessageListener$([process.env.IOT_BROKER_TOPIC])
-            .map(msg => msg.data)
-            .concatMap(data => deviceGeneralInformation.handleReportDeviceGeneralInformation(data))
-            .subscribe(
-                ({ storeResult, brokerResult }) => {
-                    console.log(
-                        `IotService proccesed incoming mesage;\n
-                            storeResult: ${JSON.stringify(storeResult)}\n
-                            brokerResult: ${JSON.stringify(brokerResult)}\n
-                        `);
-                },
-                (error) => {
-                    console.error(`IotService failed to proccess incoming msg`, error);
+    start$() {
+        return Rx.Observable.create(observer => {
+            this.subscription = this.broker.getMessageListener$([process.env.IOT_BROKER_TOPIC])
+                .map(msg => msg.data)
+                .concatMap(data => deviceGeneralInformation.handleReportDeviceGeneralInformation$(data))
+                .subscribe(
+                    ({ storeResult, brokerResult }) => {
+                        // console.log(
+                        //     `IotService proccesed incoming mesage;\n
+                        //     storeResult: ${JSON.stringify(storeResult)}\n
+                        //     brokerResult: ${JSON.stringify(brokerResult)}\n
+                        // `);
+                    },
+                    (error) => {
+                        console.error(`IotService failed to proccess incoming msg`, error);
+                        process.exit(1);
+                    },
+                    () => console.log('IotService stopped')
+                );
+            observer.next('IotService listening messages')
+            observer.complete();
+        });
 
-                },
-                () => console.log('IotService stopped')
-            );
-        console.log('IotService started')
     }
 
-    stop() {
-        this.subscription.unsubscribe();
+    stop$s() {
+        return Rx.Observable.create(observer => {
+            this.subscription.unsubscribe();
+            observer.next('IotService stopped listening to messages')
+            observer.complete();
+        });
+
     }
 
 

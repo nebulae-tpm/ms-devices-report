@@ -1,10 +1,13 @@
 // TEST LIBS
 const assert = require('assert');
+const should = require('chai').should;
+const expect = require('chai').expect;
 const Rx = require('rxjs');
 const uuidv4 = require('uuid/v4');
 
 //LIBS FOR TESTING
-const deviceGeneralInformation = require('../../bin/domain/DeviceGeneralInformation')();
+let eventSourcing;
+let deviceGeneralInformation;
 
 //GLOABAL VARS to use between tests
 let report =
@@ -85,15 +88,7 @@ let report =
             ]
         },
         "events": [
-            /*
-            {"timeStamp": 1523479712.827622, "value": "$GPRMC,,V,,,,,,,,,,N*53", "type": "GPRMC"},
-            {"t": 1523479712.827622, "vl": "$GPRMC,,V,,,,,,,,,,N*53", "tp": "GPRMC"},
-
-            {"timeStamp": 1523479571.524613, "value": 11.95, "type": "lowest_volt"},
-            {"t": 1523479571.524613, "vl": 11.95, "tp": "lowest_volt"},
-
-            {"vl":0.28999999999999998,"t":1523554710.886797,"tp":"alert_volt"},
-            */
+            
         ],
         "v": 1
     }
@@ -106,18 +101,82 @@ before run please start mqtt:
   docker run -it -p 1883:1883 -p 9001:9001 eclipse-mosquitto  
 */
 
-describe('Domain: DeviceGeneralInformation', function () {
-    describe('handle DeviceGeneralInformationReported', function () {
-        it('Format original CMD', function (done) {
-            deviceGeneralInformation.formatReport$(JSON.stringify(report))
-            .subscribe(
-                (formatted) => console.log(JSON.stringify(formatted)),
-                (error) => {
-                    console.error('Failed formatting report',error);
-                    return done(error);
-                },
-                () => {return done();}
-            );
+describe('BACKEND: devices-report-handler', function () {
+    describe('Prepare Test', function () {
+        it('Set Environment variable', function (done) {
+            // Event sourcing config
+            process.env.EVENT_STORE_BROKER_TYPE = 'MQTT'
+            process.env.EVENT_STORE_BROKER_EVENTS_TOPIC = 'Events'
+            process.env.EVENT_STORE_BROKER_URL = 'mqtt://localhost:1883'
+            process.env.EVENT_STORE_STORE_TYPE = 'MONGO'
+            process.env.EVENT_STORE_STORE_URL = 'mongodb://localhost:27017'
+            process.env.EVENT_STORE_STORE_AGGREGATES_DB_NAME = 'Aggregates'
+            process.env.EVENT_STORE_STORE_EVENTSTORE_DB_NAME = 'EventStore'
+            // IoT incoming broker config
+            process.env.IOT_BROKER_TYPE = 'MQTT'
+            process.env.IOT_BROKER_TOPIC = 'IoT'
+            process.env.IOT_BROKER_URL = 'mqtt://localhost:1883'
+            return done();
+        });
+        it('Start EventStore', function (done) {
+            eventSourcing = require('../../bin/tools/EventSourcing')();
+            eventSourcing.eventStore.start$()
+                .subscribe(
+                    (evt) => console.log(`Start EventStore: ${evt}`),
+                    (error) => {
+                        console.error('Error Starting EventStore', error);
+                        return done(error);
+                    },
+                    () => {
+                        console.log('EventStore Started');
+                        return done();
+                    }
+                );
+        });
+        it('Start DeviceGeneralInformation', function (done) {
+            deviceGeneralInformation = require('../../bin/domain/DeviceGeneralInformation')();
+            return done();
+        });
+
+    });
+    describe('Domain: DeviceGeneralInformation', function () {
+        it('handleReportDeviceGeneralInformation', function (done) {
+            deviceGeneralInformation.handleReportDeviceGeneralInformation$(report)
+                .subscribe(
+                    ({ storeResult, brokerResult }) => {
+                        // console.log(
+                        //     `IotService proccesed incoming mesage;\n
+                        //     storeResult: ${JSON.stringify(storeResult)}\n
+                        //     brokerResult: ${JSON.stringify(brokerResult)}\n
+                        // `);
+                        expect(storeResult).to.not.be.undefined;
+                        expect(brokerResult).to.not.be.undefined
+                        expect(brokerResult.messageId).to.not.be.undefined
+                    },
+                    (error) => {
+                        console.error(`handleReportDeviceGeneralInformation failed to proccess incoming msg`, error);
+                        return done(error);
+                    },
+                    () => {
+                        return done();
+                    }
+                );
+        });
+    });
+    describe('Tear down Test', function () {
+        it('Stop Event Store', function (done) {
+            eventSourcing.eventStore.stop$()
+                .subscribe(
+                    (evt) => console.log(`Stop EventStore: ${evt}`),
+                    (error) => {
+                        console.error('Error Stoping EventStore', error);
+                        return done(error);
+                    },
+                    () => {
+                        console.log('EventStore Stopped');
+                        return done();
+                    }
+                );
         });
     });
 

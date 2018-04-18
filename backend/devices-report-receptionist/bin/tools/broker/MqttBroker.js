@@ -43,7 +43,6 @@ class MqttBroker {
             .switchMap(() =>
                 this.incomingMessages$
                     .filter(msg => msg)
-                    .filter(msg => !ignoreSelfEvents || msg.attributes.senderId !== this.senderId)
                     .filter(msg => topics.length === 0 || topics.indexOf(msg.topic) > -1)                    
             );
     }
