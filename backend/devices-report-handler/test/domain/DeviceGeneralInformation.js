@@ -104,10 +104,10 @@ let uncompressedReport =
         "reportVersion": 1,
         "state": {
             "timestamp": 1523479439.711107,
-            "device": {
-                "temperature": 35,
+            "device": {                
                 "sn": "sn0001-0001-TEST",
-                "type": "OMVZ7"
+                "type": "OMVZ7",
+                "hostname": "OMVZ7"
             },
             "modem": {
                 "cellid": 19692771,
@@ -158,6 +158,7 @@ let uncompressedReport =
                 }
             },
             "system": {
+                "temperature": 35,
                 "cpuStatus": [
                     8,
                     18,

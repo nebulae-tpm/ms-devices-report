@@ -44,10 +44,10 @@ class DeviceGeneralInformationFormatter {
 
             state: {
                 timestamp: state.t,
-                device: {
-                    temperature: state.gs.temp,
+                device: {                    
                     sn: state.sDv,
-                    type: state.tDv
+                    type: state.tDv,
+                    hostname: state.h
                 },
                 modem: {
                     cellid: state.gs.cellid,
@@ -77,6 +77,7 @@ class DeviceGeneralInformationFormatter {
                     errsTranspCount: state.eTC,
                 },
                 system: {
+                    temperature: state.gs.temp,
                     volt: state.vo,
                     cpuStatus: state.cS,
                     upTime: state.uT,
