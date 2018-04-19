@@ -19,7 +19,7 @@ class DeviceStatefulEventsGenerator {
     static getGenerator$(evt, report, storedInfo) {
         return Rx.Observable.merge(
             this.temperatureAlarmEventGenerator$(evt, report, storedInfo),
-            //this.cpuAlarmEventGenerator$(evt, report, storedInfo),
+            this.cpuAlarmEventGenerator$(evt, report, storedInfo),
             //this.volumesAlarmEventGenerator$(evt, report, storedInfo),
         );
 
@@ -28,6 +28,12 @@ class DeviceStatefulEventsGenerator {
         //CPU alarm: on state.system
     }
 
+    /**
+     * Generates an observable that emits DeviceAlarmActivated or DeviceAlarmDeactivated based on the temperature
+     * @param {Event} evt the incoming event
+     * @param {*} report the formatted event data: decompressed
+     * @param {*} storedInfo the materialized view stored in db
+     */
     static temperatureAlarmEventGenerator$(evt, report, storedInfo) {
         if (!report.state.system || report.state.system.temperature === undefined) {
             return Rx.Observable.empty();
@@ -59,6 +65,51 @@ class DeviceStatefulEventsGenerator {
                         type: 'TEMPERATURE',
                         value: currentTemp,
                         unit: 'C',
+                        timestamp: report.timestamp
+                    },
+                    user: "SYSTEM.DevicesReport.devices-report-handler"
+                });
+            });
+    }
+
+
+    /**
+     * Generates an observable that emits DeviceAlarmActivated or DeviceAlarmDeactivated based on the CPU usage
+     * @param {Event} evt the incoming event
+     * @param {*} report the formatted event data: decompressed
+     * @param {*} storedInfo the materialized view stored in db
+     */
+    static cpuAlarmEventGenerator$(evt, report, storedInfo) {
+        if (!report.state.system || report.state.system.cpuStatus === undefined) {
+            return Rx.Observable.empty();
+        }
+        const maxCpuUsage = process.env.DEVICE_ALARM_CPU_USAGE_PERCENTAGE_MAX || 50;
+        const currentUsage = Math.max(report.state.system.cpuStatus[0], report.state.system.cpuStatus[1]);
+        const alarmOn = currentUsage > maxCpuUsage;
+
+        if (storedInfo.temperatureAlarmOn === alarmOn) {
+            return Rx.Observable.empty();
+        }
+
+        const eventType = (alarmOn) ? 'DeviceAlarmActivated' : 'DeviceAlarmDeactivated'
+        const properties = [{ key: 'cpuUsageAlarmOn', value: alarmOn }];
+        return DeviceGeneralInformationDA.updateDeviceGenearlInformation$(evt.aid, properties, evt.av, evt.timestamp)
+            .mergeMap(result => {
+                return (result.modifiedCount > 0 || result.upsertedCount > 0)
+                    ? Rx.Observable.of(alarmOn)
+                    : Rx.Observable.throw(
+                        new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${JSON.stringify({ sn: evt.aid, properties, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp })}`));
+            })
+            .map(evt => {
+                return new Event({
+                    eventType,
+                    eventTypeVersion: 1,
+                    aggregateType: 'Device',
+                    aggregateId: evt.aid,
+                    data: {
+                        type: 'CPU_USAGE',
+                        value: currentUsage,
+                        unit: '%',
                         timestamp: report.timestamp
                     },
                     user: "SYSTEM.DevicesReport.devices-report-handler"
