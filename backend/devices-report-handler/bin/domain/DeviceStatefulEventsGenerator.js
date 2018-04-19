@@ -20,6 +20,7 @@ class DeviceStatefulEventsGenerator {
         return Rx.Observable.merge(
             this.temperatureAlarmEventGenerator$(evt, report, storedInfo),
             this.cpuAlarmEventGenerator$(evt, report, storedInfo),
+            this.connectedEventGenerator$(evt, report, storedInfo, true),
             //this.volumesAlarmEventGenerator$(evt, report, storedInfo),
         );
 
@@ -110,6 +111,41 @@ class DeviceStatefulEventsGenerator {
                         type: 'CPU_USAGE',
                         value: currentUsage,
                         unit: '%',
+                        timestamp: report.timestamp
+                    },
+                    user: "SYSTEM.DevicesReport.devices-report-handler"
+                });
+            });
+    }
+
+    /**
+     * Generates an observable that emits DeviceConnected
+     * @param {Event} evt the incoming event
+     * @param {*} report the formatted event data: decompressed
+     * @param {*} storedInfo the materialized view stored in db
+     */
+    static connectedEventGenerator$(evt, report, storedInfo, connected) {
+        if (storedInfo.connected === connected) {
+            return Rx.Observable.empty();
+        }
+
+        const eventType = 'DeviceConnected';
+        const properties = [{ key: 'connected', value: connected }];
+        return DeviceGeneralInformationDA.updateDeviceGenearlInformation$(evt.aid, properties, evt.av, evt.timestamp)
+            .mergeMap(result => {
+                return (result.modifiedCount > 0 || result.upsertedCount > 0)
+                    ? Rx.Observable.of(connected)
+                    : Rx.Observable.throw(
+                        new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${JSON.stringify({ sn: evt.aid, properties, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp })}`));
+            })
+            .map(evt => {
+                return new Event({
+                    eventType,
+                    eventTypeVersion: 1,
+                    aggregateType: 'Device',
+                    aggregateId: evt.aid,
+                    data: {
+                        connected: connected,
                         timestamp: report.timestamp
                     },
                     user: "SYSTEM.DevicesReport.devices-report-handler"
