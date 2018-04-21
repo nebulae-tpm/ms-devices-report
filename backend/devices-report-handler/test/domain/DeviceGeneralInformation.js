@@ -92,6 +92,7 @@ let compressedReport =
             { "t": 1523479571.524613, "vl": 11.95, "tp": "lowest_volt" },
             { "t": 1523479571.524613, "vl": 11.95, "tp": "highest_volt" },
             { "t": 1523554710.886797, "vl": 0.28999999999999998, "tp": "alert_volt" },
+            { "tp": "disconnect", "d": "unknown" }
         ],
         "v": 1
     }
@@ -104,7 +105,7 @@ let uncompressedReport =
         "reportVersion": 1,
         "state": {
             "timestamp": 1523479439.711107,
-            "device": {                
+            "device": {
                 "sn": "sn0001-0001-TEST",
                 "type": "OMVZ7",
                 "hostname": "OMVZ7"
@@ -205,12 +206,16 @@ let uncompressedReport =
             {
                 "timestamp": 1523479439.711107,
                 "type": "usosTranspCount",
-                "value": 0                
+                "value": 0
             },
             {
                 "timestamp": 1523479439.711107,
                 "type": "errsTranspCount",
-                "value": 0                
+                "value": 0
+            },
+            {
+                "desc": "unknown",
+                "type": "disconnect"
             }
         ]
     };

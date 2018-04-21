@@ -134,7 +134,8 @@ class DeviceGeneralInformationFormatter {
                     {
                         timestamp: evt.t,
                         type: evt.tp,
-                        value: evt.vl
+                        value: evt.vl,
+                        desc: evt.d
                     }
                 );
             });

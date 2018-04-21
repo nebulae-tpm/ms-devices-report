@@ -21,7 +21,7 @@ class DeviceStatefulEventsGenerator {
             this.temperatureAlarmEventGenerator$(evt, report, storedInfo),
             this.cpuAlarmEventGenerator$(evt, report, storedInfo),
             this.connectedEventGenerator$(evt, report, storedInfo, true),
-            //this.volumesAlarmEventGenerator$(evt, report, storedInfo),
+            this.volumesAlarmEventGenerator$(evt, report, storedInfo),
         );
 
         //Volumes alarms: on state.volumes
@@ -47,7 +47,7 @@ class DeviceStatefulEventsGenerator {
             return Rx.Observable.empty();
         }
 
-        const eventType = (alarmOn) ? 'DeviceAlarmActivated' : 'DeviceAlarmDeactivated'
+        const eventType = (alarmOn) ? 'DeviceTemperatureAlarmActivated' : 'DeviceTemperatureAlarmDeactivated'
         const properties = [{ key: 'temperatureAlarmOn', value: alarmOn }];
         return DeviceGeneralInformationDA.updateDeviceGenearlInformation$(evt.aid, properties, evt.av, evt.timestamp)
             .mergeMap(result => {
@@ -63,7 +63,6 @@ class DeviceStatefulEventsGenerator {
                     aggregateType: 'Device',
                     aggregateId: evt.aid,
                     data: {
-                        type: 'TEMPERATURE',
                         value: currentTemp,
                         unit: 'C',
                         timestamp: report.timestamp
@@ -92,7 +91,7 @@ class DeviceStatefulEventsGenerator {
             return Rx.Observable.empty();
         }
 
-        const eventType = (alarmOn) ? 'DeviceAlarmActivated' : 'DeviceAlarmDeactivated'
+        const eventType = (alarmOn) ? 'DeviceCpuUsageAlarmActivated' : 'DeviceCpuUsageAlarmDeactivated'
         const properties = [{ key: 'cpuUsageAlarmOn', value: alarmOn }];
         return DeviceGeneralInformationDA.updateDeviceGenearlInformation$(evt.aid, properties, evt.av, evt.timestamp)
             .mergeMap(result => {
@@ -108,10 +107,60 @@ class DeviceStatefulEventsGenerator {
                     aggregateType: 'Device',
                     aggregateId: evt.aid,
                     data: {
-                        type: 'CPU_USAGE',
                         value: currentUsage,
                         unit: '%',
                         timestamp: report.timestamp
+                    },
+                    user: "SYSTEM.DevicesReport.devices-report-handler"
+                });
+            });
+    }
+
+    /**
+     * Generates an observable that emits Device[SD]UsageAlarmActivated or Device[SD]UsageAlarmDeactivated based on the CPU usage
+     * @param {Event} evt the incoming event
+     * @param {*} report the formatted event data: decompressed
+     * @param {*} storedInfo the materialized view stored in db
+     */
+    static volumesAlarmEventGenerator$(evt, report, storedInfo) {
+        if (!report.state.volumes) {
+            return Rx.Observable.empty();
+        }
+        const maxVolumeUsage = process.env.DEVICE_VOLUME_USAGE_PERCENTAGE_MAX || 70;
+
+        return Rx.Observable.from(report.state.volumes)
+            .map(volume => {
+                const currentUsage = (volume.current / volume.total) * 100;
+                const alarmOn = currentUsage > maxVolumeUsage;
+                return {
+                    currentUsage, alarmOn, volume
+                };
+            })
+            .mergeMap(diagnostic => (storedInfo[`${diagnostic.volume.type}VolumeUsageAlarmOn`] === diagnostic.alarmOn)
+                ? Rx.Observable.empty()
+                : Rx.Observable.of(diagnostic))
+            .mergeMap(({ currentUsage, alarmOn, volume }) => {
+                const eventType = (alarmOn) ? camelCase(`Device ${volume.type} Usage Alarm Activated`, { pascalCase: true }) : camelCase(`Device ${volume.type} Usage Alarm Deactivated`, { pascalCase: true })
+                const properties = [{ key: `${volume.type}VolumeUsageAlarmOn`, value: alarmOn }];
+                return DeviceGeneralInformationDA.updateDeviceGenearlInformation$(evt.aid, properties, evt.av, evt.timestamp)
+                    .mergeMap(result => {
+                        return (result.modifiedCount > 0 || result.upsertedCount > 0)
+                            ? Rx.Observable.of({ eventType, currentUsage, alarmOn, volume })
+                            : Rx.Observable.throw(
+                                new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${JSON.stringify({ sn: evt.aid, properties, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp })}`));
+                    })
+            })
+            .map(({ eventType, currentUsage, alarmOn, volume }) => {
+                return new Event({
+                    eventType,
+                    eventTypeVersion: 1,
+                    aggregateType: 'Device',
+                    aggregateId: evt.aid,
+                    data: {
+                        value: currentUsage,
+                        unit: '%',
+                        timestamp: report.timestamp,
+
                     },
                     user: "SYSTEM.DevicesReport.devices-report-handler"
                 });
