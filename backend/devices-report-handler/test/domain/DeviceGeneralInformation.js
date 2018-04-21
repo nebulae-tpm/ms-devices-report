@@ -165,15 +165,15 @@ let uncompressedReport =
                     18,
                     21
                 ],
-                "upTime": "15:43:58 up 2 days, 8:39, load average: 0.08, 0.18, 0.21"
-            },
-            "volumes": [
-                {
+                "upTime": "15:43:58 up 2 days, 8:39, load average: 0.08, 0.18, 0.21",
+                "ram": {
                     "current": 456912,
                     "total": 1026448,
                     "type": "MEM",
                     "unit": "KiB"
-                },
+                }
+            },
+            "volumes": [
                 {
                     "current": 830,
                     "total": 7446,
@@ -204,18 +204,18 @@ let uncompressedReport =
                 "value": 0.29
             },
             {
+                "type": "disconnect",
+                "desc": "unknown"
+            },
+            {
                 "timestamp": 1523479439.711107,
-                "type": "usosTranspCount",
-                "value": 0
+                "value": 0,
+                "type": "usosTranspCount"
             },
             {
                 "timestamp": 1523479439.711107,
                 "type": "errsTranspCount",
                 "value": 0
-            },
-            {
-                "desc": "unknown",
-                "type": "disconnect"
             }
         ]
     };
@@ -226,6 +226,7 @@ describe('BACKEND: devices-report-handler', function () {
             DeviceGeneralInformationFormatter.formatReport$(compressedReport)
                 .subscribe(
                     (formatted) => {
+                        console.log(JSON.stringify(formatted, null, 2));
                         assert.deepEqual(JSON.parse(JSON.stringify(formatted)), uncompressedReport);
                     },
                     (error) => {

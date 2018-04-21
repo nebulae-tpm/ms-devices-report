@@ -124,7 +124,11 @@ class DeviceGeneralInformationFormatter {
                     type: vol.tp,
                     unit: vol.uI,
                 };
-                formatted.state.volumes.push(volume);
+                if(volume.type === 'MEM'){
+                    formatted.state.system.ram = volume;
+                }else{
+                    formatted.state.volumes.push(volume);
+                }                
             });
         }
         if (report.events) {
