@@ -226,7 +226,7 @@ describe('BACKEND: devices-report-handler', function () {
             DeviceGeneralInformationFormatter.formatReport$(compressedReport)
                 .subscribe(
                     (formatted) => {
-                        console.log(JSON.stringify(formatted, null, 2));
+                        //console.log(JSON.stringify(formatted, null, 2));
                         assert.deepEqual(JSON.parse(JSON.stringify(formatted)), uncompressedReport);
                     },
                     (error) => {
