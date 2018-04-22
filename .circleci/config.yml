@@ -1,0 +1,177 @@
+
+version: 2
+jobs:
+  prepare:
+    working_directory: /nebulae/
+    docker:
+      - image: circleci/node:9.9.0
+        command: bash
+    steps:
+      - checkout:
+          path: /nebulae/repo
+      - run:
+        name: Create Repo directory change script
+        command: |
+          echo TODO
+      - persist_to_workspace:
+          root: /nebulae
+          # Must be relative path from root
+          paths:
+            - repo
+            - scripts
+
+  build-frontend:
+    working_directory: /nebulae/
+    docker:
+      - image: circleci/node:9.9.0
+        command: bash
+    steps:
+      - attach_workspace:
+          at: /nebulae
+      - run:
+          name: Installing NebulaE cli & Compose FrontEnd
+          command: |
+            gitChanged frontend || echo $GCP_SERVICE_ACCOUNT_PROD | base64 --decode --ignore-garbage > /tmp/gcloud-service-key.json
+            gitChanged frontend || npm config set prefix '~/.npm-global'
+            gitChanged frontend || export PATH=~/.npm-global/bin:$PATH
+            gitChanged frontend || source ~/.profile
+            gitChanged frontend || npm install -g @nebulae/cli
+            gitChanged frontend || npm install -g @angular/cli
+            gitChanged frontend || nebulae compose-ui production --shell-type=FUSE2_ANGULAR --shell-repo=https://github.com/nebulae-tpm/emi.git --frontend-id=$CIRCLE_PROJECT_REPONAME --output-dir=/nebulae/frontend/emi/ --store-type=GCP_DATASTORE --gcp-service-account-token=/tmp/gcloud-service-key.json
+            gitChanged frontend || ls /nebulae/frontend/emi/
+      - setup_remote_docker
+      - run:
+          name: Build docker image and push it to hub
+          command: |
+            gitChanged frontend || ( mkdir /nebulae/frontend && cd  /nebulae/frontend/ && git clone https://github.com/nebulae-tpm/emi --depth=1 --directory=shell)      
+            gitChanged frontend || ls /nebulae/frontend/emi/dist/ 
+            gitChanged frontend || export DOCKERHUB_NAMESPACE=$DOCKERHUB_NAMESPACE
+            gitChanged frontend || export DOCKERHUB_USER=$DOCKERHUB_USER
+            gitChanged frontend || export DOCKERHUB_PASS=$DOCKERHUB_PASS
+            gitChanged frontend || export FRONTEND_SHELL_PATH=/nebulae/frontend/emi/
+            gitChanged frontend || cd /nebulae/repo
+            gitChanged frontend || sh /nebulae/frontend/shell/deployment/docker/build-docker-hub.sh
+      - persist_to_workspace:
+          root: /nebulae/
+          paths:
+            - frontend
+            
+                  
+  build-api:    
+    working_directory: /nebulae/
+    docker:
+      - image: circleci/node:9.9.0
+        command: bash
+    steps:
+      - run:
+          name: Installing NebulaE cli & Compose API
+          command: |            
+            gitChanged api || echo $GCP_SERVICE_ACCOUNT_PROD | base64 --decode --ignore-garbage > /tmp/gcloud-service-key.json
+            gitChanged api || npm config set prefix '~/.npm-global'
+            gitChanged api || export PATH=~/.npm-global/bin:$PATH
+            gitChanged api || source ~/.profile
+            gitChanged api || npm install -g @nebulae/cli
+            gitChanged api || nebulae compose-api production --api-type=NEBULAE_GATEWAY --api-repo=https://github.com/nebulae-tpm/gateway.git --api-id=gateway --output-dir=/nebulae/api/gateway/ --store-type=GCP_DATASTORE --gcp-service-account-token=/tmp/gcloud-service-key.json      
+            gitChanged api || ls /nebulae/api/gateway/ 
+      - setup_remote_docker
+      - run:
+          name: Build docker image and push it to hub
+          command: | 
+            gitChanged api || ( mkdir /nebulae/api && cd  /nebulae/api/ && git clone https://github.com/nebulae-tpm/gateway --depth=1 --directory=shell)     
+            gitChanged api || export DOCKERHUB_NAMESPACE=$DOCKERHUB_NAMESPACE
+            gitChanged api || export DOCKERHUB_USER=$DOCKERHUB_USER
+            gitChanged api || export DOCKERHUB_PASS=$DOCKERHUB_PASS
+            gitChanged api || export API_SHELL_PATH=/tmp/
+            gitChanged api || sh /nebulae/api/shell/deployment/docker/build-docker-hub.sh
+      - persist_to_workspace:
+          root: /nebulae/
+          paths:
+            - api   
+
+  build-backend:    
+    working_directory: /nebulae/
+    docker:
+      - image: circleci/node:9.9.0
+        command: bash
+    steps:
+      - setup_remote_docker      
+      - run:
+          name: Build docker image for RECEPCIONIST
+          command: |             
+            export DOCKERHUB_NAMESPACE=$DOCKERHUB_NAMESPACE
+            export DOCKERHUB_USER=$DOCKERHUB_USER
+            export DOCKERHUB_PASS=$DOCKERHUB_PASS
+            gitChanged backend/devices-report-receptionist ||             
+            gitChanged api || sh /nebulae/api/shell/deployment/docker/build-docker-hub.sh
+      - persist_to_workspace:
+          root: /nebulae/
+          paths:
+            - api   
+
+
+  
+   
+
+  build-docker:
+    working_directory: /tmp
+    docker:
+      - image: docker:17.05.0-ce-git
+    steps:
+      - checkout:
+          path: /tmp/repo
+      - setup_remote_docker
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: /tmp
+      - run:
+          name:  build & push docker-hub
+          command: |      
+            ls /tmp/dist/ 
+            export DOCKERHUB_NAMESPACE=$DOCKERHUB_NAMESPACE
+            export DOCKERHUB_USER=$DOCKERHUB_USER
+            export DOCKERHUB_PASS=$DOCKERHUB_PASS
+            export API_SHELL_PATH=/tmp/
+            cd /tmp/repo
+            sh /tmp/repo/deployment/docker/build-docker-hub.sh
+  deploy-prod:
+      working_directory: /tmp/workspace
+      docker:
+        - image: google/cloud-sdk:latest
+      steps:
+        - checkout
+        - run:
+            name: Setup gcloud & kubectl
+            command: |
+              echo $GCP_SERVICE_ACCOUNT_PROD | base64 --decode --ignore-garbage > /root/gcloud-service-key.json
+              gcloud auth activate-service-account --key-file /root/gcloud-service-key.json            
+              gcloud --quiet config set project $GKE_PROJECT_PROD
+              gcloud --quiet config set compute/zone $GKE_ZONE_PROD
+              gcloud --quiet container clusters get-credentials $GKE_CLUSTER
+        - run:
+            name: Deploy on Kubernetes
+            command: |
+              kubectl apply -f /tmp/workspace/deployment/gke/              
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - prepare:
+          context: TPM
+      - build-frontend:
+          context: TPM
+          requires:
+            - entry-point
+      - build-api:
+          context: TPM
+          requires:
+            - entry-point
+      - build-backend:
+          context: TPM
+          requires:
+            - entry-point
+      - deploy-prod:
+          context: TPM
+          requires:
+            - build-frontend
+            - build-api
+            - build-backend
