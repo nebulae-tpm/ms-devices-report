@@ -78,7 +78,7 @@ class DeviceGeneralInformationFormatter {
                 },
                 system: {
                     temperature: state.gs.temp,
-                    volt: state.vo,
+                    voltage: state.vo,
                     cpuStatus: state.cS,
                     upTime: state.uT,
                 }
@@ -112,7 +112,15 @@ class DeviceGeneralInformationFormatter {
             delete table.TT;
             table.ListaNegra = table.LN;
             delete table.LN;
+        }
 
+        if (formatted.state.system.voltage) {
+            formatted.state.system.voltage.low = formatted.state.system.voltage.lV;
+            formatted.state.system.voltage.high = formatted.state.system.voltage.hV;
+            formatted.state.system.voltage.current = formatted.state.system.voltage.cV;            
+            delete formatted.state.system.voltage.lV;
+            delete formatted.state.system.voltage.hV;
+            delete formatted.state.system.voltage.cV;
         }
 
         if (state.dD) {

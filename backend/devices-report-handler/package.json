@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/nebulae-tpm/ms-devices-report#readme",
   "dependencies": {
-    "@nebulae/event-store": "^0.1.5",
+    "@nebulae/event-store": "^0.1.6",
     "camelcase": "^5.0.0",
     "deep-equal": "^1.0.1",
     "lodash": "^4.17.5",
