@@ -173,15 +173,15 @@ workflows:
       - build-frontend:
           context: TPM
           requires:
-            - entry-point
+            - prepare
       - build-api:
           context: TPM
           requires:
-            - entry-point
+            - prepare
       - build-backend:
           context: TPM
           requires:
-            - entry-point
+            - prepare
       - deploy-prod:
           context: TPM
           requires:
