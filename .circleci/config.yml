@@ -2,28 +2,28 @@
 version: 2
 jobs:
   prepare:
-    working_directory: /nebulae/
+    working_directory: ~/nebulae/
     docker:
       - image: circleci/node:9.9.0
         command: bash
         user: circleci
     steps:
       - checkout:
-          path: /nebulae/repo
+          path: ~/nebulae/repo
       - persist_to_workspace:
-          root: /nebulae
+          root: ~/nebulae
           paths:
             - repo
             - scripts
 
   build-frontend:
-    working_directory: /nebulae/
+    working_directory: ~/nebulae/
     docker:
       - image: circleci/node:9.9.0
         command: bash
     steps:
       - attach_workspace:
-          at: /nebulae
+          at: ~/nebulae
       - run:
           name: Installing NebulaE cli & Compose FrontEnd
           command: |
@@ -35,30 +35,30 @@ jobs:
             gitChanged frontend || source ~/.profile
             gitChanged frontend || npm install -g @nebulae/cli
             gitChanged frontend || npm install -g @angular/cli
-            gitChanged frontend || nebulae compose-ui production --shell-type=FUSE2_ANGULAR --shell-repo=https://github.com/nebulae-tpm/emi.git --frontend-id=$CIRCLE_PROJECT_REPONAME --output-dir=/nebulae/frontend/emi/ --store-type=GCP_DATASTORE --gcp-service-account-token=/tmp/gcloud-service-key.json
-            gitChanged frontend || ls /nebulae/frontend/emi/
+            gitChanged frontend || nebulae compose-ui production --shell-type=FUSE2_ANGULAR --shell-repo=https://github.com/nebulae-tpm/emi.git --frontend-id=$CIRCLE_PROJECT_REPONAME --output-dir=~/nebulae/frontend/emi/ --store-type=GCP_DATASTORE --gcp-service-account-token=/tmp/gcloud-service-key.json
+            gitChanged frontend || ls ~/nebulae/frontend/emi/
       - setup_remote_docker
       - run:
           name: Build docker image and push it to hub
           command: |
             echo $GIT_CHANGED_SCRIPT | base64 --decode --ignore-garbage > /tmp/git-changed.script.json
             source /tmp/git-changed.script.json
-            gitChanged frontend || ( mkdir /nebulae/frontend && cd  /nebulae/frontend/ && git clone https://github.com/nebulae-tpm/emi --depth=1 --directory=shell)      
-            gitChanged frontend || ls /nebulae/frontend/emi/dist/ 
+            gitChanged frontend || ( mkdir ~/nebulae/frontend && cd  ~/nebulae/frontend/ && git clone https://github.com/nebulae-tpm/emi --depth=1 --directory=shell)      
+            gitChanged frontend || ls ~/nebulae/frontend/emi/dist/ 
             gitChanged frontend || export DOCKERHUB_NAMESPACE=$DOCKERHUB_NAMESPACE
             gitChanged frontend || export DOCKERHUB_USER=$DOCKERHUB_USER
             gitChanged frontend || export DOCKERHUB_PASS=$DOCKERHUB_PASS
-            gitChanged frontend || export FRONTEND_SHELL_PATH=/nebulae/frontend/emi/
-            gitChanged frontend || cd /nebulae/repo
-            gitChanged frontend || sh /nebulae/frontend/shell/deployment/docker/build-docker-hub.sh
+            gitChanged frontend || export FRONTEND_SHELL_PATH=~/nebulae/frontend/emi/
+            gitChanged frontend || cd ~/nebulae/repo
+            gitChanged frontend || sh ~/nebulae/frontend/shell/deployment/docker/build-docker-hub.sh
       - persist_to_workspace:
-          root: /nebulae/
+          root: ~/nebulae/
           paths:
             - frontend
             
                   
   build-api:    
-    working_directory: /nebulae/
+    working_directory: ~/nebulae/
     docker:
       - image: circleci/node:9.9.0
         command: bash
@@ -73,27 +73,27 @@ jobs:
             gitChanged api || export PATH=~/.npm-global/bin:$PATH
             gitChanged api || source ~/.profile
             gitChanged api || npm install -g @nebulae/cli
-            gitChanged api || nebulae compose-api production --api-type=NEBULAE_GATEWAY --api-repo=https://github.com/nebulae-tpm/gateway.git --api-id=gateway --output-dir=/nebulae/api/gateway/ --store-type=GCP_DATASTORE --gcp-service-account-token=/tmp/gcloud-service-key.json      
-            gitChanged api || ls /nebulae/api/gateway/ 
+            gitChanged api || nebulae compose-api production --api-type=NEBULAE_GATEWAY --api-repo=https://github.com/nebulae-tpm/gateway.git --api-id=gateway --output-dir=~/nebulae/api/gateway/ --store-type=GCP_DATASTORE --gcp-service-account-token=/tmp/gcloud-service-key.json      
+            gitChanged api || ls ~/nebulae/api/gateway/ 
       - setup_remote_docker
       - run:
           name: Build docker image and push it to hub
           command: | 
             echo $GIT_CHANGED_SCRIPT | base64 --decode --ignore-garbage > /tmp/git-changed.script.json
             source /tmp/git-changed.script.json
-            gitChanged api || ( mkdir /nebulae/api && cd  /nebulae/api/ && git clone https://github.com/nebulae-tpm/gateway --depth=1 --directory=shell)     
+            gitChanged api || ( mkdir ~/nebulae/api && cd  ~/nebulae/api/ && git clone https://github.com/nebulae-tpm/gateway --depth=1 --directory=shell)     
             gitChanged api || export DOCKERHUB_NAMESPACE=$DOCKERHUB_NAMESPACE
             gitChanged api || export DOCKERHUB_USER=$DOCKERHUB_USER
             gitChanged api || export DOCKERHUB_PASS=$DOCKERHUB_PASS
             gitChanged api || export API_SHELL_PATH=/tmp/
-            gitChanged api || sh /nebulae/api/shell/deployment/docker/build-docker-hub.sh
+            gitChanged api || sh ~/nebulae/api/shell/deployment/docker/build-docker-hub.sh
       - persist_to_workspace:
-          root: /nebulae/
+          root: ~/nebulae/
           paths:
             - api   
             
   build-backend:    
-    working_directory: /nebulae/
+    working_directory: ~/nebulae/
     docker:
       - image: circleci/node:9.9.0
         command: bash
@@ -106,7 +106,7 @@ jobs:
             source /tmp/git-changed.script.json        
             export DOCKERHUB_IMAGE=devices-report.backend.devices-report-recepcionist            
             export DOCKERHUB_TAG=0.0.1
-            gitChanged backend/devices-report-receptionist || docker build  -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:latest deployment/docker/
+            gitChanged backend/devices-report-receptionist || docker build  -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:latest backend/devices-report-recepcionist
             gitChanged backend/devices-report-receptionist || docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
             gitChanged backend/devices-report-receptionist || docker push $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG
             gitChanged backend/devices-report-receptionist || docker push $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:latest
@@ -117,38 +117,17 @@ jobs:
             source /tmp/git-changed.script.json        
             export DOCKERHUB_IMAGE=devices-report.backend.devices-report-handler
             export DOCKERHUB_TAG=0.0.1
-            gitChanged backend/devices-report-handler || docker build  -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:latest deployment/docker/
+            gitChanged backend/devices-report-handler || docker build  -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:latest backend/devices-report-handler
             gitChanged backend/devices-report-handler || docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
             gitChanged backend/devices-report-handler || docker push $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG
             gitChanged backend/devices-report-handler || docker push $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:latest
       - persist_to_workspace:
-          root: /nebulae/
+          root: ~/nebulae/
           paths:
             - api   
 
-  build-docker:
-    working_directory: /tmp
-    docker:
-      - image: docker:17.05.0-ce-git
-    steps:
-      - checkout:
-          path: /tmp/repo
-      - setup_remote_docker
-      - attach_workspace:
-          # Must be absolute path or relative path from working_directory
-          at: /tmp
-      - run:
-          name:  build & push docker-hub
-          command: |      
-            ls /tmp/dist/ 
-            export DOCKERHUB_NAMESPACE=$DOCKERHUB_NAMESPACE
-            export DOCKERHUB_USER=$DOCKERHUB_USER
-            export DOCKERHUB_PASS=$DOCKERHUB_PASS
-            export API_SHELL_PATH=/tmp/
-            cd /tmp/repo
-            sh /tmp/repo/deployment/docker/build-docker-hub.sh
   deploy-prod:
-      working_directory: /tmp/workspace
+      working_directory: ~/nebulae/
       docker:
         - image: google/cloud-sdk:latest
       steps:
@@ -164,7 +143,7 @@ jobs:
         - run:
             name: Deploy on Kubernetes
             command: |
-              kubectl apply -f /tmp/workspace/deployment/gke/              
+              kubectl apply -f ~/nebulae/deployment/gke/              
 workflows:
   version: 2
   build-and-deploy:
