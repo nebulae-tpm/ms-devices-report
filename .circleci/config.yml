@@ -6,6 +6,7 @@ jobs:
     docker:
       - image: circleci/node:9.9.0
         command: bash
+        user: circleci
     steps:
       - checkout:
           path: /nebulae/repo
