@@ -9,10 +9,6 @@ jobs:
     steps:
       - checkout:
           path: /nebulae/repo
-      - run:
-        name: Create Repo directory change script
-        command: |
-          echo TODO
       - persist_to_workspace:
           root: /nebulae
           paths:
