@@ -55,7 +55,6 @@ jobs:
           root: ~/nebulae/
           paths:
             - frontend
-            - repo
             
                   
   build-api:    
@@ -64,6 +63,8 @@ jobs:
       - image: circleci/node:9.9.0
         command: bash
     steps:
+      - attach_workspace:
+          at: ~/nebulae
       - run:
           name: Installing NebulaE cli & Compose API
           command: |    
@@ -92,9 +93,7 @@ jobs:
       - persist_to_workspace:
           root: ~/nebulae/
           paths:
-            - frontend
             - api   
-            - repo
             
   build-backend:    
     working_directory: ~/nebulae/
@@ -102,6 +101,8 @@ jobs:
       - image: circleci/node:9.9.0
         command: bash
     steps:
+      - attach_workspace:
+          at: ~/nebulae
       - setup_remote_docker      
       - run:
           name: Build docker image for RECEPCIONIST
@@ -129,9 +130,6 @@ jobs:
       - persist_to_workspace:
           root: ~/nebulae/
           paths:
-            - frontend
-            - api   
-            - repo
             - backend
 
   deploy-prod:
@@ -145,6 +143,7 @@ jobs:
         - run:
             name: Setup gcloud & kubectl
             command: |
+              ls -a ~/nebulae
               echo $GCP_SERVICE_ACCOUNT_PROD | base64 --decode --ignore-garbage > /root/gcloud-service-key.json
               gcloud auth activate-service-account --key-file /root/gcloud-service-key.json            
               gcloud --quiet config set project $GKE_PROJECT_PROD
