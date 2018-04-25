@@ -57,7 +57,7 @@ class DeviceStatefulEventsGenerator {
                     : Rx.Observable.throw(
                         new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${JSON.stringify({ sn: evt.aid, properties, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp })}`));
             })
-            .map(evt => {
+            .map(alarmOn => {
                 return new Event({
                     eventType,
                     eventTypeVersion: 1,
@@ -101,7 +101,7 @@ class DeviceStatefulEventsGenerator {
                     : Rx.Observable.throw(
                         new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${JSON.stringify({ sn: evt.aid, properties, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp })}`));
             })
-            .map(evt => {
+            .map(alarmOn => {
                 return new Event({
                     eventType,
                     eventTypeVersion: 1,
@@ -145,7 +145,7 @@ class DeviceStatefulEventsGenerator {
                     : Rx.Observable.throw(
                         new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${JSON.stringify({ sn: evt.aid, properties, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp })}`));
             })
-            .map(evt => {
+            .map(alarmOn => {
                 return new Event({
                     eventType,
                     eventTypeVersion: 1,
@@ -232,7 +232,7 @@ class DeviceStatefulEventsGenerator {
                     : Rx.Observable.throw(
                         new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${JSON.stringify({ sn: evt.aid, properties, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp })}`));
             })
-            .map(evt => {
+            .map(connected => {
                 return new Event({
                     eventType,
                     eventTypeVersion: 1,
