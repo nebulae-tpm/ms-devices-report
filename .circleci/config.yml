@@ -28,7 +28,7 @@ jobs:
           name: Installing NebulaE cli & Compose FrontEnd
           command: |            
             source ~/nebulae/repo/.circleci/scripts/gitChanged.sh
-            cd ~/nebulae/repo/
+            cd ~/nebulae/repo/            
             gitChanged frontend || echo $GCP_SERVICE_ACCOUNT_PROD | base64 --decode --ignore-garbage > /tmp/gcloud-service-key.json
             gitChanged frontend || npm config set prefix '~/.npm-global'
             gitChanged frontend || export PATH=~/.npm-global/bin:$PATH
@@ -43,6 +43,7 @@ jobs:
           command: |
             source ~/nebulae/repo/.circleci/scripts/gitChanged.sh
             cd ~/nebulae/repo/
+            mkdir ~/nebulae/frontend
             gitChanged frontend || ( mkdir ~/nebulae/frontend && cd  ~/nebulae/frontend/ && git clone https://github.com/nebulae-tpm/emi --depth=1 --directory=shell)      
             gitChanged frontend || ls ~/nebulae/frontend/emi/dist/ 
             gitChanged frontend || export DOCKERHUB_NAMESPACE=$DOCKERHUB_NAMESPACE
@@ -67,7 +68,7 @@ jobs:
           name: Installing NebulaE cli & Compose API
           command: |    
             source ~/nebulae/repo/.circleci/scripts/gitChanged.sh
-            cd ~/nebulae/repo/
+            cd ~/nebulae/repo/            
             gitChanged api || echo $GCP_SERVICE_ACCOUNT_PROD | base64 --decode --ignore-garbage > /tmp/gcloud-service-key.json
             gitChanged api || npm config set prefix '~/.npm-global'
             gitChanged api || export PATH=~/.npm-global/bin:$PATH
@@ -81,6 +82,7 @@ jobs:
           command: | 
             source ~/nebulae/repo/.circleci/scripts/gitChanged.sh
             cd ~/nebulae/repo/
+            mkdir ~/nebulae/api
             gitChanged api || ( mkdir ~/nebulae/api && cd  ~/nebulae/api/ && git clone https://github.com/nebulae-tpm/gateway --depth=1 --directory=shell)     
             gitChanged api || export DOCKERHUB_NAMESPACE=$DOCKERHUB_NAMESPACE
             gitChanged api || export DOCKERHUB_USER=$DOCKERHUB_USER
@@ -121,10 +123,6 @@ jobs:
             gitChanged backend/devices-report-handler || docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
             gitChanged backend/devices-report-handler || docker push $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG
             gitChanged backend/devices-report-handler || docker push $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:latest
-      - persist_to_workspace:
-          root: ~/nebulae/
-          paths:
-            - api   
 
   deploy-prod:
       working_directory: ~/nebulae/
