@@ -27,6 +27,7 @@ jobs:
       - run:
           name: Installing NebulaE cli & Compose FrontEnd
           command: |
+            ls -a ~/nebulae/repo
             echo $GIT_CHANGED_SCRIPT | base64 --decode --ignore-garbage > /tmp/git-changed.script.sh
             cat /tmp/git-changed.script.sh
             source /tmp/git-changed.script.sh
