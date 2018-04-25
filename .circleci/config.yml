@@ -28,6 +28,7 @@ jobs:
           name: Installing NebulaE cli & Compose FrontEnd
           command: |            
             source ~/nebulae/repo/.circleci/scripts/gitChanged.sh
+            cd ~/nebulae/repo/
             gitChanged frontend || echo $GCP_SERVICE_ACCOUNT_PROD | base64 --decode --ignore-garbage > /tmp/gcloud-service-key.json
             gitChanged frontend || npm config set prefix '~/.npm-global'
             gitChanged frontend || export PATH=~/.npm-global/bin:$PATH
@@ -40,8 +41,8 @@ jobs:
       - run:
           name: Build docker image and push it to hub
           command: |
-            echo $GIT_CHANGED_SCRIPT | base64 --decode --ignore-garbage > /tmp/git-changed.script.json
-            source /tmp/git-changed.script.json
+            source ~/nebulae/repo/.circleci/scripts/gitChanged.sh
+            cd ~/nebulae/repo/
             gitChanged frontend || ( mkdir ~/nebulae/frontend && cd  ~/nebulae/frontend/ && git clone https://github.com/nebulae-tpm/emi --depth=1 --directory=shell)      
             gitChanged frontend || ls ~/nebulae/frontend/emi/dist/ 
             gitChanged frontend || export DOCKERHUB_NAMESPACE=$DOCKERHUB_NAMESPACE
@@ -66,6 +67,7 @@ jobs:
           name: Installing NebulaE cli & Compose API
           command: |    
             source ~/nebulae/repo/.circleci/scripts/gitChanged.sh
+            cd ~/nebulae/repo/
             gitChanged api || echo $GCP_SERVICE_ACCOUNT_PROD | base64 --decode --ignore-garbage > /tmp/gcloud-service-key.json
             gitChanged api || npm config set prefix '~/.npm-global'
             gitChanged api || export PATH=~/.npm-global/bin:$PATH
@@ -78,6 +80,7 @@ jobs:
           name: Build docker image and push it to hub
           command: | 
             source ~/nebulae/repo/.circleci/scripts/gitChanged.sh
+            cd ~/nebulae/repo/
             gitChanged api || ( mkdir ~/nebulae/api && cd  ~/nebulae/api/ && git clone https://github.com/nebulae-tpm/gateway --depth=1 --directory=shell)     
             gitChanged api || export DOCKERHUB_NAMESPACE=$DOCKERHUB_NAMESPACE
             gitChanged api || export DOCKERHUB_USER=$DOCKERHUB_USER
@@ -100,6 +103,7 @@ jobs:
           name: Build docker image for RECEPCIONIST
           command: |
             source ~/nebulae/repo/.circleci/scripts/gitChanged.sh
+            cd ~/nebulae/repo/
             export DOCKERHUB_IMAGE=devices-report.backend.devices-report-recepcionist            
             export DOCKERHUB_TAG=0.0.1
             gitChanged backend/devices-report-receptionist || docker build  -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:latest backend/devices-report-recepcionist
@@ -110,6 +114,7 @@ jobs:
           name: Build docker image for HANDLER
           command: |
             source ~/nebulae/repo/.circleci/scripts/gitChanged.sh
+            cd ~/nebulae/repo/
             export DOCKERHUB_IMAGE=devices-report.backend.devices-report-handler
             export DOCKERHUB_TAG=0.0.1
             gitChanged backend/devices-report-handler || docker build  -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:latest backend/devices-report-handler
