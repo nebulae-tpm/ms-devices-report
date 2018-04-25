@@ -112,7 +112,7 @@ jobs:
             mkdir ~/nebulae/backend
             export DOCKERHUB_IMAGE=devices-report.backend.devices-report-recepcionist            
             export DOCKERHUB_TAG=0.0.1
-            gitChanged backend/devices-report-receptionist || docker build  -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:latest ~/nebulae/repo/backend/backend/devices-report-receptionist/
+            gitChanged backend/devices-report-receptionist || docker build  -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:latest ~/nebulae/repo/backend/devices-report-receptionist/
             gitChanged backend/devices-report-receptionist || docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
             gitChanged backend/devices-report-receptionist || docker push $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG
             gitChanged backend/devices-report-receptionist || docker push $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:latest
