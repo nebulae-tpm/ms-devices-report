@@ -44,7 +44,7 @@ class DeviceGeneralInformationFormatter {
 
             state: {
                 timestamp: state.t,
-                device: {                    
+                device: {
                     sn: state.sDv,
                     type: state.tDv,
                     hostname: state.h
@@ -117,7 +117,7 @@ class DeviceGeneralInformationFormatter {
         if (formatted.state.system.voltage) {
             formatted.state.system.voltage.low = formatted.state.system.voltage.lV;
             formatted.state.system.voltage.high = formatted.state.system.voltage.hV;
-            formatted.state.system.voltage.current = formatted.state.system.voltage.cV;            
+            formatted.state.system.voltage.current = formatted.state.system.voltage.cV;
             delete formatted.state.system.voltage.lV;
             delete formatted.state.system.voltage.hV;
             delete formatted.state.system.voltage.cV;
@@ -132,11 +132,11 @@ class DeviceGeneralInformationFormatter {
                     type: vol.tp,
                     unit: vol.uI,
                 };
-                if(volume.type === 'MEM'){
+                if (volume.type === 'MEM') {
                     formatted.state.system.ram = volume;
-                }else{
+                } else {
                     formatted.state.volumes.push(volume);
-                }                
+                }
             });
         }
         if (report.events) {
@@ -181,6 +181,12 @@ class DeviceGeneralInformationFormatter {
                 value: formatted.state.mainApp.errsTranspCount
             });
             delete formatted.state.mainApp.errsTranspCount;
+        }
+
+        if (state.aD) {
+            if (state.aD.gN && formatted.state.device) {
+                formatted.state.device.groupName = state.aD.gN;
+            }
         }
 
         return formatted;

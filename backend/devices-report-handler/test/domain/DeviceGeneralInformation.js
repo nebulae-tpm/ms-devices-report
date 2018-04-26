@@ -15,6 +15,9 @@ let compressedReport =
         "state": {
             "uTC": 0,
             "sDv": "sn0001-0001-TEST",
+            "aD": {
+                "gN": "Cuenca 1"
+            },
             "sDs": "sn0001-0001-DISP",
             "ATVer": {
                 "LN": "5378.07",
@@ -86,7 +89,7 @@ let compressedReport =
                 18.0,
                 21.0
             ]
-        },
+        },        
         "events": [
             { "t": 1523479712.827622, "vl": "$GPRMC,,V,,,,,,,,,,N*53", "tp": "GPRMC" },
             { "t": 1523479571.524613, "vl": 11.95, "tp": "lowest_volt" },
@@ -108,7 +111,8 @@ let uncompressedReport =
             "device": {
                 "sn": "sn0001-0001-TEST",
                 "type": "OMVZ7",
-                "hostname": "OMVZ7"
+                "hostname": "OMVZ7",
+                "groupName": "Cuenca 1"
             },
             "modem": {
                 "cellid": 19692771,
