@@ -137,7 +137,6 @@ jobs:
       steps:
         - attach_workspace:
             at: ~/nebulae
-        - checkout
         - run:
             name: Setup gcloud & kubectl
             command: |
