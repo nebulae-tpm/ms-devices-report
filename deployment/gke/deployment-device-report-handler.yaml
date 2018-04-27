@@ -1,22 +1,22 @@
 apiVersion: apps/v1beta2 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: device-report-handler
+  name: dev-rep-handler
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: device-report-handler
+      app: dev-rep-handler
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: device-report-handler
+        app: dev-rep-handler
     spec:      
       containers:
       - image: nebulaetpm/devices-report.backend.devices-report-recepcionis:0.0.1
-        name: device-report-handler
+        name: dev-rep-handler
         env:        
           - name: EVENT_STORE_BROKER_TYPE
             value: PUBSUB
@@ -31,7 +31,7 @@ spec:
           - name: EVENT_STORE_STORE_EVENTSTORE_DB_NAME
             value: EventStore
           - name: MONGODB_URL
-            value: mongodb://device-report-mongo:27017
+            value: mongodb://dev-rep-mongo:27017
           - name: MONGODB_DB_NAME
             value: DevicesReport
           - name: DEVICE_ALARM_TEMPERATURE_MAX

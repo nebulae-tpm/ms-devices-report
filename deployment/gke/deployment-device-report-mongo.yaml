@@ -1,18 +1,18 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: device-report-mongo
+  name: dev-rep-mongo
 spec:
   ports:
   - port: 27017
-    name: device-report-mongo
+    name: dev-rep-mongo
   selector:
-    app: device-report-mongo
+    app: dev-rep-mongo
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: device-report-mongo-pv-claim
+  name: dev-rep-mongo-pv-claim
 spec:
   accessModes:
     - ReadWriteOnce
@@ -23,28 +23,28 @@ spec:
 apiVersion: apps/v1beta2 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: device-report-mongo
+  name: dev-rep-mongo
 spec:
   selector:
     matchLabels:
-      app: device-report-mongo
+      app: dev-rep-mongo
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: device-report-mongo
+        app: dev-rep-mongo
     spec:
       containers:
       - image: mongo:3.7-jessie
-        name: device-report-mongo        
+        name: dev-rep-mongo        
         ports:
         - containerPort: 27017
-          name: device-report-mongo
+          name: dev-rep-mongo
         volumeMounts:
-        - name: device-report-mongo-persistent-storage
+        - name: dev-rep-mongo-persistent-storage
           mountPath: /data/db
       volumes:
-      - name: device-report-mongo-persistent-storage
+      - name: dev-rep-mongo-persistent-storage
         persistentVolumeClaim:
-          claimName: device-report-mongo-pv-claim
+          claimName: dev-rep-mongo-pv-claim
