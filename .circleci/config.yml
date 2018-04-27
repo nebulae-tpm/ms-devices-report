@@ -149,8 +149,8 @@ jobs:
         - run:
             name: Deploy EMI FrontEnd
             command: |
-              'ls ~/nebulae/frontend/DOCKERHUB_GENERATED_IMAGE_DIGEST && echo docker image DIGEST to set $(< ~/nebulae/frontend/DOCKERHUB_GENERATED_IMAGE_DIGEST)'
-              'ls ~/nebulae/frontend/DOCKERHUB_GENERATED_IMAGE_DIGEST && kubectl set image deployment/frontend-emi frontend-emi=$(< ~/nebulae/frontend/DOCKERHUB_GENERATED_IMAGE_DIGEST)'
+              (ls ~/nebulae/frontend/DOCKERHUB_GENERATED_IMAGE_DIGEST && echo docker image DIGEST to set $(< ~/nebulae/frontend/DOCKERHUB_GENERATED_IMAGE_DIGEST) ) || echo frontend not found
+              (ls ~/nebulae/frontend/DOCKERHUB_GENERATED_IMAGE_DIGEST && kubectl set image deployment/frontend-emi frontend-emi=$(< ~/nebulae/frontend/DOCKERHUB_GENERATED_IMAGE_DIGEST) ) || echo frontend not found
         - run:
             name: Deploy GATEWAY API
             command: |
