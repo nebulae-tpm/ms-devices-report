@@ -18,19 +18,19 @@ spec:
       - image: nebulaetpm/devices-report.backend.devices-report-recepcionis:0.0.1
         name: device-report-recepcionist
         env:        
-        - name: EVENT_STORE_BROKER_TYPE
-          value: PUBSUB
-        - name: EVENT_STORE_BROKER_EVENTS_TOPIC
-          value: events
-        - name: EVENT_STORE_STORE_TYPE
-          value: MONGO
-        - name: EVENT_STORE_STORE_URL
-          value: mongodb://dbevents-0.dbevents:27017,dbevents-1.dbevents:27017,dbevents-2.dbevents:27017/test?replicaSet=rs0
-        - name: EVENT_STORE_STORE_AGGREGATES_DB_NAME
-          value: Aggregates
-        - name: EVENT_STORE_STORE_EVENTSTORE_DB_NAME
-          value: EventStore
-        - name: IOT_BROKER_TYPE
-          value: PUBSUB
-        - name: IOT_BROKER_TOPIC
-          value: devices-iot        
+          - name: EVENT_STORE_BROKER_TYPE
+            value: PUBSUB
+          - name: EVENT_STORE_BROKER_EVENTS_TOPIC
+            value: events
+          - name: EVENT_STORE_STORE_TYPE
+            value: MONGO
+          - name: EVENT_STORE_STORE_URL
+            value: mongodb://dbevents-0.dbevents:27017,dbevents-1.dbevents:27017,dbevents-2.dbevents:27017/test?replicaSet=rs0
+          - name: EVENT_STORE_STORE_AGGREGATES_DB_NAME
+            value: Aggregates
+          - name: EVENT_STORE_STORE_EVENTSTORE_DB_NAME
+            value: EventStore
+          - name: IOT_BROKER_TYPE
+            value: PUBSUB
+          - name: IOT_BROKER_TOPIC
+            value: devices-iot        
