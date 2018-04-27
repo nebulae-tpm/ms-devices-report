@@ -159,7 +159,7 @@ jobs:
         - run:
             name: Deploy BsckEnds 
             command: |
-              kubectl apply -f ~/nebulae/deployment/gke/              
+              kubectl apply -f ~/nebulae/repo/deployment/gke/              
 workflows: 
   version: 2
   build-and-deploy:
