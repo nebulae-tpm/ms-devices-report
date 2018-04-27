@@ -149,13 +149,13 @@ jobs:
         - run:
             name: Deploy EMI FrontEnd
             command: |
-              '[ -f ~/nebulae/frontend/DOCKERHUB_GENERATED_IMAGE_DIGEST ] && echo docker image DIGEST to set $(< ~/nebulae/frontend/DOCKERHUB_GENERATED_IMAGE_DIGEST)'
-              '[ -f ~/nebulae/frontend/DOCKERHUB_GENERATED_IMAGE_DIGEST ] && kubectl set image deployment/frontend-emi frontend-emi=$(< ~/nebulae/frontend/DOCKERHUB_GENERATED_IMAGE_DIGEST)'
+              'ls ~/nebulae/frontend/DOCKERHUB_GENERATED_IMAGE_DIGEST && echo docker image DIGEST to set $(< ~/nebulae/frontend/DOCKERHUB_GENERATED_IMAGE_DIGEST)'
+              'ls ~/nebulae/frontend/DOCKERHUB_GENERATED_IMAGE_DIGEST && kubectl set image deployment/frontend-emi frontend-emi=$(< ~/nebulae/frontend/DOCKERHUB_GENERATED_IMAGE_DIGEST)'
         - run:
             name: Deploy GATEWAY API
             command: |
-              [ -f ~/nebulae/api/DOCKERHUB_GENERATED_IMAGE_DIGEST ] && echo docker image DIGEST to set $(< ~/nebulae/api/DOCKERHUB_GENERATED_IMAGE_DIGEST)
-              [ -f ~/nebulae/api/DOCKERHUB_GENERATED_IMAGE_DIGEST ] && kubectl set image deployment/api-gateway api-gateway=$(< ~/nebulae/api/DOCKERHUB_GENERATED_IMAGE_DIGEST)
+              ls ~/nebulae/api/DOCKERHUB_GENERATED_IMAGE_DIGEST && echo docker image DIGEST to set $(< ~/nebulae/api/DOCKERHUB_GENERATED_IMAGE_DIGEST)
+              ls ~/nebulae/api/DOCKERHUB_GENERATED_IMAGE_DIGEST && kubectl set image deployment/api-gateway api-gateway=$(< ~/nebulae/api/DOCKERHUB_GENERATED_IMAGE_DIGEST)
         - run:
             name: Deploy BsckEnds 
             command: |
