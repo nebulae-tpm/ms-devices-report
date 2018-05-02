@@ -18,7 +18,7 @@ spec:
       - image: nebulaetpm/devices-report.backend.devices-report-recepcionist:0.0.3
         name: dev-rep-recep
         volumeMounts:
-        - name: GOOGLE_APPLICATION_CREDENTIALS
+        - name: google-application-credentials
           mountPath: "/etc/GOOGLE_APPLICATION_CREDENTIALS"
           readOnly: true
         env:        
@@ -38,7 +38,7 @@ spec:
           value: PUBSUB
         - name: IOT_BROKER_TOPIC
           value: devices-iot  
-        - name: google-application-credentials
+        - name: GOOGLE_APPLICATION_CREDENTIALS
           value: /etc/GOOGLE_APPLICATION_CREDENTIALS/gcloud-service-key.json
       volumes:
       - name: google-application-credentials
