@@ -17,7 +17,7 @@ class EventSourcing {
                 eventsTopicSubscription: `${process.env.EVENT_STORE_BROKER_EVENTS_TOPIC}_devices-report-handler`,
                 brokerUrl: process.env.EVENT_STORE_BROKER_URL,
                 projectId: process.env.EVENT_STORE_BROKER_PROJECT_ID,
-            },
+            }, 
             {
                 type: process.env.EVENT_STORE_STORE_TYPE,
                 url: process.env.EVENT_STORE_STORE_URL,
