@@ -15,7 +15,7 @@ spec:
         app: dev-rep-recep
     spec:      
       containers:
-      - image: nebulaetpm/devices-report.backend.devices-report-recepcionist:0.0.1
+      - image: docker pull nebulaetpm/devices-report.backend.devices-report-recepcionist:0.0.1
         name: dev-rep-recep
         env:        
         - name: EVENT_STORE_BROKER_TYPE

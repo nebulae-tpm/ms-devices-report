@@ -15,7 +15,7 @@ spec:
         app: dev-rep-handler
     spec:      
       containers:
-      - image: nebulaetpm/devices-report.backend.devices-report-hanler:0.0.1
+      - image: nebulaetpm/devices-report.backend.devices-report-handler:0.0.1
         name: dev-rep-handler
         env:        
         - name: EVENT_STORE_BROKER_TYPE
