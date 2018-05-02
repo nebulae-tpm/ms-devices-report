@@ -21,6 +21,6 @@ const start = () => {
         () => console.log('devices-report-recepcionist started')
     );
 };
-
+ 
 
 start();
