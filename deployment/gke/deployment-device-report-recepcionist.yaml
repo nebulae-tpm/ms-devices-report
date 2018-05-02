@@ -1,22 +1,22 @@
 apiVersion: apps/v1beta2 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: dev-rep-recepcionist
+  name: dev-rep-recep
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: dev-rep-recepcionist
+      app: dev-rep-recep
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: dev-rep-recepcionist
+        app: dev-rep-recep
     spec:      
       containers:
-      - image: nebulaetpm/devices-report.backend.devices-report-recepcionis:0.0.1
-        name: dev-rep-recepcionist
+      - image: nebulaetpm/devices-report.backend.devices-report-recepcionist:0.0.1
+        name: dev-rep-recep
         env:        
         - name: EVENT_STORE_BROKER_TYPE
           value: PUBSUB
