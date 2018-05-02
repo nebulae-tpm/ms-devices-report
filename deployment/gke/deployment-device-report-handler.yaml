@@ -46,6 +46,8 @@ spec:
           value: '70'
         - name: DEVICE_ALARM_VOLUME_USAGE_PERCENTAGE_MAX
           value: '70' 
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /etc/GOOGLE_APPLICATION_CREDENTIALS/gcloud-service-key.json
       volumes:
       - name: google-application-credentials
         secret:
