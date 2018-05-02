@@ -33,4 +33,10 @@ spec:
         - name: IOT_BROKER_TYPE
           value: PUBSUB
         - name: IOT_BROKER_TOPIC
-          value: devices-iot        
+          value: devices-iot  
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          valueFrom:
+            secretKeyRef:
+              name: google-application-credentials
+              key: gcloud-service-key.json
+                
