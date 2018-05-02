@@ -5,17 +5,11 @@ const uuidv4 = require('uuid/v4');
 
 class PubSubBroker {
 
-    constructor({ projectId, gatewayRepliesTopic, gatewayRepliesTopicSubscription, replyTimeOut }) {
-        this.projectId = projectId
-        this.gatewayRepliesTopic = gatewayRepliesTopic;
-        this.gatewayRepliesTopicSubscription = gatewayRepliesTopicSubscription;
-        this.replyTimeOut = replyTimeOut;
-
+    constructor({ }) {
         /**
          * Rx Subject for every message reply
          */
-        this.replies$ = new Rx.BehaviorSubject();
-        this.senderId = uuidv4();
+        this.incomingMessages$ = new Rx.BehaviorSubject();
         /**
          * Map of verified topics
          */
@@ -23,55 +17,65 @@ class PubSubBroker {
 
         const PubSub = require('@google-cloud/pubsub');
         this.pubsubClient = new PubSub({
-            projectId: this.projectId,
+            //projectId: this.projectId,
         });
-        //lets start listening to messages
-        this.startMessageListener();
-    }
-
-    /**
-     * Forward the Graphql query/mutation to the Microservices
-     * @param {string} topic topic to publish
-     * @param { {root,args,jwt} } message payload {root,args,jwt}
-     * @param {Object} ops {correlationId, messageId} 
-     */
-    forward$(topic, payload, ops = {}) {
-        return this.getTopic$(topic)
-            .switchMap(topic => this.publish$(topic, payload, ops))
-    }
-
-    /**
-     * Forward the Graphql query/mutation to the Microservices
-     * @param {string} topic topic to publish
-     * @param { {root,args,jwt} } message payload {root,args,jwt}
-     * @param {number} timeout wait timeout millis
-     * @param {boolean} ignoreSelfEvents ignore messages comming from this clien
-     * @param {Object} ops {correlationId, messageId}
-     * 
-     * Returns an Observable that resolves the message response
-     */
-    forwardAndGetReply$(topic, payload, timeout = this.replyTimeout, ignoreSelfEvents = true, ops) {
-        return this.forward$(topic, payload, ops)
-            .switchMap((messageId) => this.getMessageReply$(messageId, timeout, ignoreSelfEvents))
     }
 
 
     /**
-     * Returns an observable that waits for the message response or throws an error if timeout is exceded
-     * @param {string} correlationId 
-     * @param {number} timeout 
+     * Returns an Observable that will emit any message
+     * @param {string[] ?} topics topic to listen
+     * @param {boolean ?} ignoreSelfEvents 
      */
-    getMessageReply$(correlationId, timeout = this.replyTimeOut, ignoreSelfEvents = true) {
-        return this.replies$
-            .filter(msg => msg)
-            .filter(msg => !ignoreSelfEvents || msg.attributes.senderId !== this.senderId)
-            .filter(msg => msg.correlationId === correlationId)
-            .map(msg => msg.data)
-            .timeout(timeout)
-            .first();
+    getMessageListener$(topics = [], ignoreSelfEvents = true) {
+        return this.configMessageListener$(topics)
+            .switchMap(() =>
+                this.incomingMessages$
+                    .filter(msg => msg)
+                    .filter(msg => topics.length === 0 || topics.indexOf(msg.topic) > -1)
+            );
     }
 
+    /**
+     * Config the broker to listen to several topics
+     * Returns an observable that resolves to a stream of subscribed topics
+     * @param {Array} topics topics to listen
+     */
+    configMessageListener$(topics) {
+        return Rx.Observable.create((observer) => {
 
+
+            Rx.Observable.from(topics)
+                .mergeMap(topic => this.getSubscription$(topic, `${topic}_devices-report-recepcionist`)
+                    .map(subsription => { return { topic, subsription } }))
+                .subscribe(
+                    ({ topic, subsription }) => {
+                        subsription.on(`message`, message => {
+                            //console.log(`Received message ${message.id}:`);
+                            this.incomingMessages$.next({ id: message.id, data: JSON.parse(message.data), attributes: message.attributes, correlationId: message.attributes.correlationId });
+                            message.ack();
+                        });
+                        observer.next(topic);
+                    },
+                    (err) => {
+                        console.error('Failed to obtain GatewayReplies subscription', err);
+                        observer.error(err);
+                    },
+                    () => {
+                        console.log('PubSubBroker listener registered');
+                        observer.complete();
+                    }
+
+                )
+        })
+            .reduce((acc, topic) => {
+                acc.push(topic);
+                return acc;
+            }, []);
+
+        ;
+
+    }
 
     /**
      * Gets an observable that resolves to the topic object
@@ -116,21 +120,6 @@ class PubSubBroker {
     }
 
     /**
-     * Publish data throught a topic
-     * Returns an Observable that resolves to the sent message ID
-     * @param {Topic} topic 
-     * @param {Object} data 
-     * @param {Object} ops {correlationId, messageId} 
-     */
-    publish$(topic, data,  { correlationId, messageId } = {}) {
-        const dataBuffer = Buffer.from(JSON.stringify(data));
-        return Rx.Observable.fromPromise(
-            topic.publisher().publish(dataBuffer, { senderId: this.senderId, correlationId }))
-            //.do(messageId => console.log(`Message published through ${topic.name}, MessageId=${messageId}`))
-            ;
-    }
-
-    /**
      * Returns an Observable that resolves to the subscription
      * @param {string} topicName 
      * @param {string} subscriptionName 
@@ -143,37 +132,30 @@ class PubSubBroker {
             ).map(results => results[0]);
     }
 
-    /**
-     * Starts to listen messages
-     */
-    startMessageListener() {
-        this.getSubscription$(this.gatewayRepliesTopic, this.gatewayRepliesTopicSubscription)
-            .subscribe(
-                (pubSubSubscription) => {
-                    pubSubSubscription.on(`message`, message => {
-                        //console.log(`Received message ${message.id}:`);
-                        this.replies$.next({ id: message.id, data: JSON.parse(message.data), attributes: message.attributes, correlationId: message.attributes.correlationId });
-                        message.ack();
-                    });
-                },
-                (err) => {
-                    console.error('Failed to obtain GatewayReplies subscription', err);
-                },
-                () => {
-                    //console.log('GatewayReplies listener has completed!');
-                }
-            );
-    }
+
 
     /**
      * Stops broker 
      */
-    disconnectBroker() {
-        this.getSubscription$(this.gatewayRepliesTopic, this.gatewayRepliesTopicSubscription).subscribe(
-            (subscription) => subscription.removeListener(`message`),
-            (error) => console.error(`Error disconnecting Broker`, error),
-            () => console.log('Broker disconnected')
-        );
+    disconnectBroker$() {
+
+        return Rx.Observable.create((observer) => {
+            this.getSubscription$(this.topic, this.topicSubscription).subscribe(
+                (subscription) => {
+                    subscription.removeListener(`message`);
+                    observer.next(`Removed listener for ${subscription}`);
+                },
+                (error) => {
+                    console.error(`Error disconnecting Broker`, error);
+                    observer.error(error);
+                },
+                () => {
+                    console.log('Broker disconnected');
+                    observer.complete();
+                }
+            );
+        });
+
     }
 }
 
