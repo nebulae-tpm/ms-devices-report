@@ -109,7 +109,7 @@ jobs:
             cd ~/nebulae/repo/
             mkdir ~/nebulae/backend
             export DOCKERHUB_IMAGE=devices-report.backend.devices-report-recepcionist            
-            export DOCKERHUB_TAG=0.0.1
+            export DOCKERHUB_TAG=0.0.2
             gitChanged backend/devices-report-receptionist || docker build  -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:latest ~/nebulae/repo/backend/devices-report-receptionist/
             gitChanged backend/devices-report-receptionist || docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
             gitChanged backend/devices-report-receptionist || docker push $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG
@@ -157,7 +157,7 @@ jobs:
               (ls ~/nebulae/api/DOCKERHUB_GENERATED_IMAGE_DIGEST && echo docker image DIGEST to set $(< ~/nebulae/api/DOCKERHUB_GENERATED_IMAGE_DIGEST) ) || echo api not found
               (ls ~/nebulae/api/DOCKERHUB_GENERATED_IMAGE_DIGEST && kubectl set image deployment/api-gateway api-gateway=$(< ~/nebulae/api/DOCKERHUB_GENERATED_IMAGE_DIGEST) ) || echo api not found
         - run:
-            name: Deploy BsckEnds 
+            name: Deploy BackEnds 
             command: |
               kubectl apply -f ~/nebulae/repo/deployment/gke/              
 workflows: 
