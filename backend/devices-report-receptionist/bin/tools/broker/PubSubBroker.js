@@ -27,7 +27,7 @@ class PubSubBroker {
      * @param {string[] ?} topics topic to listen
      * @param {boolean ?} ignoreSelfEvents 
      */
-    getMessageListener$(topics = [], ignoreSelfEvents = true) {
+    getMessageListener$(topics = [], ignoreSelfEvents = true) { 
         return this.configMessageListener$(topics)
             .switchMap(() =>
                 this.incomingMessages$
