@@ -50,15 +50,15 @@ class DeviceGeneralInformationFormatter {
                     hostname: state.h
                 },
                 modem: {
-                    cellid: state.gs.cellid,
-                    band: state.gs.band,
-                    mode: state.gs.mode,
+                    cellid: !state.gs ? undefined : state.gs.cellid,
+                    band: !state.gs ? undefined :state.gs.band,
+                    mode: !state.gs ? undefined :state.gs.mode,
                     sn: state.sM,
                     simStatus: state.sS,
                     simImei: state.sI,
-                    rsrq: state.gs.rsrq,
-                    sinr: state.gs.sinr,
-                    tac: state.gs.tac,
+                    rsrq: !state.gs ? undefined :state.gs.rsrq,
+                    sinr: !state.gs ? undefined :state.gs.sinr,
+                    tac: !state.gs ? undefined :state.gs.tac,
                 },
                 display: {
                     sn: state.sDs,
