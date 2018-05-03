@@ -19,11 +19,11 @@ class IotService {
                 .concatMap(data => deviceGeneralInformation.handleReportDeviceGeneralInformation$(data))
                 .subscribe(
                     ({ storeResult, brokerResult }) => {
-                        // console.log(
-                        //     `IotService proccesed incoming mesage;\n
-                        //     storeResult: ${JSON.stringify(storeResult)}\n
-                        //     brokerResult: ${JSON.stringify(brokerResult)}\n
-                        // `);
+                        console.log(
+                            `IotService proccesed incoming mesage;\n
+                            storeResult: ${JSON.stringify(storeResult)}\n
+                            brokerResult: ${JSON.stringify(brokerResult)}\n
+                        `);
                     },
                     (error) => {
                         console.error(`IotService failed to proccess incoming msg`, error);
