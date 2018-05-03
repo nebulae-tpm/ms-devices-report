@@ -77,7 +77,7 @@ class DeviceGeneralInformationFormatter {
                     errsTranspCount: state.eTC,
                 },
                 system: {
-                    temperature: state.gs.temp,
+                    temperature: !state.gs ? undefined : state.gs.temp,
                     voltage: state.vo,
                     cpuStatus: state.cS,
                     upTime: state.uT,
