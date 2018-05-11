@@ -9,8 +9,6 @@ class BrokerFactory {
             case 'PUBSUB':
                 const PubSubBroker = require('./PubSubBroker');
                 this.broker = new PubSubBroker({
-                    topic: process.env.IOT_BROKER_TOPIC,
-                    topicSubscription: `${process.env.IOT_BROKER_TOPIC}_devices-report-recepcionist`
                 });
                 break;
             case 'MQTT':

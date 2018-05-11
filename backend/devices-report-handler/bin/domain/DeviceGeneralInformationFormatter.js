@@ -30,7 +30,7 @@ class DeviceGeneralInformationFormatter {
                 return this.formatIncomingReportV1(incomingReport);
                 break;
             default:
-                throw new Error('Incoming Device General Information has an unsupported version: ' + incomingReport.v);
+                console.error('Incoming Device General Information has an unsupported version: ' + incomingReport.v);
                 break
         }
     }
