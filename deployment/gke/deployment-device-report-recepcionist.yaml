@@ -15,7 +15,7 @@ spec:
         app: dev-rep-recep
     spec:      
       containers:
-      - image: nebulaetpm/devices-report.backend.devices-report-recepcionist:0.0.7
+      - image: nebulaetpm/devices-report.backend.devices-report-recepcionist:0.0.8
         name: dev-rep-recep
         volumeMounts:
         - name: google-application-credentials
