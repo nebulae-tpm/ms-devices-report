@@ -17,6 +17,7 @@ class DeviceGeneralInformationDA {
     }
 
     /**
+     * 
      * Updates a device general informtion
      * @param {String} sn Device serial number
      * @param {[{key, value}]} properties Array of properties to update
