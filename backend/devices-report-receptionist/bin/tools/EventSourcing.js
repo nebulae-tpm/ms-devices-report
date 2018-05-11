@@ -32,7 +32,7 @@ class EventSourcing {
 module.exports = () => {
     if (!instance) {
         instance = new EventSourcing();
-        console.log('EventSourcing Singleton created');
+        console.log('EventSourcing Singleton created ');
     }
     return instance;
 };
