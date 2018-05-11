@@ -52,6 +52,7 @@ class PubSubBroker {
                     ({ topic, subsription }) => {
                         subsription.on(`message`, message => {
                             //console.log(`Received message ${message.id}:`);
+                            message.ack();
                             this.incomingMessages$.next(
                                 {
                                     id: message.id,
@@ -60,8 +61,7 @@ class PubSubBroker {
                                     correlationId: message.attributes.correlationId,
                                     topic: topic
                                 }
-                            );
-                            message.ack();
+                            );                            
                         });
                         observer.next(topic);
                     },

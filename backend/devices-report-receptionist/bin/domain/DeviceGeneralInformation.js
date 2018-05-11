@@ -18,15 +18,21 @@ class DeviceGeneralInformation {
      * @param {*} command 
      */
     handleReportDeviceGeneralInformation$(report) {
-        const event = new Event({
-            eventType: 'DeviceGeneralInformationReported',
-            eventTypeVersion: report.v,
-            aggregateType: 'Device',
-            aggregateId: report.state.sDv,
-            data: report,
-            user: 'devices-report-receptionist'
-        });
-        return eventSourcing.eventStore.emitEvent$(event);
+        try {
+            const event = new Event({
+                eventType: 'DeviceGeneralInformationReported',
+                eventTypeVersion: report.v,
+                aggregateType: 'Device',
+                aggregateId: report.state.sDv,
+                data: report,
+                user: 'devices-report-receptionist'
+            });
+            return eventSourcing.eventStore.emitEvent$(event);
+        }
+        catch (error) { 
+            console.log(error);
+            return Rx.Observable.of(undefined);
+        }
     }
 }
 
