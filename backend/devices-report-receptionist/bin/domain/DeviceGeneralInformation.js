@@ -31,7 +31,9 @@ class DeviceGeneralInformation {
         }
         catch (error) { 
             console.log(error);
-            return Rx.Observable.of(undefined);
+            return Rx.Observable.of(error => { 
+                return { message: 'Failed to format message', error: error };
+            });
         }
     }
 }
