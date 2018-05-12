@@ -8,14 +8,8 @@ class DeviceGeneralInformationFormatter {
      * @param {Object} compressedReport 
      */
     static formatReport$(compressedReport) {
-        console.log(JSON.stringify(compressedReport));
         return Rx.Observable.of(compressedReport)        
             .map(unformatted => this.formatIncomingReport(unformatted))
-            .do(result => {
-                console.log('--------------------------------RESULT------------------------------------------------');
-                console.log(JSON.stringify(result));
-                console.log('--------------------------------------------------------------------------------------');
-            })
     }
 
     /**

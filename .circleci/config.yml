@@ -109,7 +109,7 @@ jobs:
             cd ~/nebulae/repo/
             mkdir ~/nebulae/backend
             export DOCKERHUB_IMAGE=devices-report.backend.devices-report-recepcionist            
-            export DOCKERHUB_TAG=0.0.11
+            export DOCKERHUB_TAG=0.0.12
             gitChanged backend/devices-report-receptionist || docker build  -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:latest ~/nebulae/repo/backend/devices-report-receptionist/
             gitChanged backend/devices-report-receptionist || docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
             gitChanged backend/devices-report-receptionist || docker push $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG
@@ -120,7 +120,7 @@ jobs:
             source ~/nebulae/repo/.circleci/scripts/gitChanged.sh
             cd ~/nebulae/repo/
             export DOCKERHUB_IMAGE=devices-report.backend.devices-report-handler
-            export DOCKERHUB_TAG=0.0.7
+            export DOCKERHUB_TAG=0.0.8
             gitChanged backend/devices-report-handler || docker build  -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:latest ~/nebulae/repo/backend/devices-report-handler
             gitChanged backend/devices-report-handler || docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
             gitChanged backend/devices-report-handler || docker push $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG

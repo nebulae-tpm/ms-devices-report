@@ -15,7 +15,6 @@ class IotService {
     start$() {
         return Rx.Observable.create(observer => {
             this.subscription = this.broker.getMessageListener$([process.env.IOT_BROKER_TOPIC])
-                .do(data => console.log("IOT ----> ", data))
                 .map(msg => msg.data)
                 .concatMap(data => deviceGeneralInformation.handleReportDeviceGeneralInformation$(data))
                 .subscribe(

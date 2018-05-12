@@ -64,9 +64,6 @@ class DeviceStateEventGenerator {
                 diffs.push({ key, value: report.state[key] });
             }
         });
-        console.log('((((((((((((((((((((((((((((((((((DIFFS)))))))))))))))))))))))))))))))))))))))))))');
-        console.log(JSON.stringify(diffs));
-        console.log('))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))');
         return { sn: evt.aid, properties: diffs, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp };
     }
 }
