@@ -7,15 +7,13 @@ spec:
   selector:
     matchLabels:
       app: dev-rep-recep
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:
         app: dev-rep-recep
     spec:      
       containers:
-      - image: nebulaetpm/devices-report.backend.devices-report-recepcionist:0.0.7
+      - image: nebulaetpm/devices-report.backend.devices-report-recepcionist:0.0.11
         name: dev-rep-recep
         volumeMounts:
         - name: google-application-credentials

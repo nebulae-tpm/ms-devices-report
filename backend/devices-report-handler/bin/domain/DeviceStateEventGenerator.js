@@ -9,6 +9,7 @@ const camelCase = require('camelcase');
 const nmea = require('node-nmea')
 
 class DeviceStateEventGenerator {
+    
     /**
      * Returns an observable that will emit Events related to the Device State
      * @param {Event} evt the incoming event
@@ -63,6 +64,9 @@ class DeviceStateEventGenerator {
                 diffs.push({ key, value: report.state[key] });
             }
         });
+        console.log('((((((((((((((((((((((((((((((((((DIFFS)))))))))))))))))))))))))))))))))))))))))))');
+        console.log(JSON.stringify(diffs));
+        console.log('))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))');
         return { sn: evt.aid, properties: diffs, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp };
     }
 }
