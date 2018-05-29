@@ -24,9 +24,37 @@ class MongoDB {
         return Rx.Observable.bindNodeCallback(MongoClient.connect)(this.url)
             .map(client => {
                 this.client = client;
-                this.db = this.client.db(this.dbName);                
+                this.db = this.client.db(this.dbName);
                 return `MongoDB connected to dbName= ${this.dbName}`;
             });
+    }
+
+    /*
+    * Stops DB connections
+    * Returns an Obserable that resolve to a string log
+    */
+    stop$() {
+        return Rx.Observable.create((observer) => {
+            this.client.close();
+            observer.next('Mongo DB Client closed');
+            observer.complete();
+        });
+    }
+
+
+    /**
+      * Ensure Index creation
+      * Returns an Obserable that resolve to a string log
+      */
+    createIndexes$() {
+        return Rx.Observable.create(async (observer) => {
+
+            observer.next('Creating index for DeviceReport.DeviceGeneralInformation => ({ sn: 1 })  ');
+            await this.db.collection('DeviceGeneralInformation').createIndex({ "sn": 1 });
+
+            observer.next('All indexes created');
+            observer.complete();
+        });
     }
 
 

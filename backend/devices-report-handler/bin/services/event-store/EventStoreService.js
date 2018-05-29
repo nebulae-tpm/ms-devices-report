@@ -12,6 +12,7 @@ class EventStoreService {
     constructor() {
         this.functionMap = this.generateFunctionMap();
         this.subscriptions = [];
+        this.aggregateEventsArray = this.generateAggregateEventsArray();
     }
 
 
@@ -31,9 +32,9 @@ class EventStoreService {
             () => console.log('EventStore incoming event subscription completed');
         }
 
-        return Rx.Observable.of(
-            { aggregateType: 'Device', eventType: 'DeviceGeneralInformationReported', onErrorHandler, onCompleteHandler },
-        ).map(params => this.subscribeEventHandler(params));
+        return Rx.Observable.from(this.aggregateEventsArray)
+            .map(aggregateEvent => { return { ...aggregateEvent, onErrorHandler, onCompleteHandler } })
+            .map(params => this.subscribeEventHandler(params));
     }
 
     /**
@@ -41,7 +42,7 @@ class EventStoreService {
      * Returns observable that resolves to each unsubscribed subscription as string     
      */
     stop$() {
-        Rx.Observable.from(this.subscriptions)
+        return Rx.Observable.from(this.subscriptions)
             .map(subscription => {
                 subscription.subscription.unsubscribe();
                 return `Unsubscribed: aggregateType=${aggregateType}, eventType=${eventType}, handlerName=${handlerName}`;
@@ -66,6 +67,44 @@ class EventStoreService {
             );
         this.subscriptions.push({ aggregateType, eventType, handlerName: handler.fn.name, subscription });
         return { aggregateType, eventType, handlerName: `${handler.obj.name}.${handler.fn.name}` };
+    }
+
+    /**
+    * Starts listening to the EventStore
+    * Returns observable that resolves to each subscribe agregate/event
+    *    emit value: { aggregateType, eventType, handlerName}
+    */
+    syncState$() {
+        return Rx.Observable.from(this.aggregateEventsArray)
+            .concatMap(params => this.subscribeEventRetrieval$(params))
+    }
+
+
+    /**
+     * Create a subscrition to the event store and returns the subscription info     
+     * @param {{aggregateType, eventType, onErrorHandler, onCompleteHandler}} params
+     * @return { aggregateType, eventType, handlerName  }
+     */
+    subscribeEventRetrieval$({ aggregateType, eventType }) {
+        const handler = this.functionMap[eventType];
+        //MANDATORY:  AVOIDS ACK REGISTRY DUPLICATIONS
+        return eventSourcing.eventStore.ensureAcknowledgeRegistry$(aggregateType)
+            .switchMap(() => eventSourcing.eventStore.retrieveUnacknowledgedEvents$(aggregateType, 'ms-devices-report_mbe_handler'))
+            .filter(evt => evt.et === eventType)
+            .concatMap(evt => Rx.Observable.concat(
+                handler.fn.call(handler.obj, evt),
+                //MANDATORY:  ACKWOWLEDGE THIS EVENT WAS PROCESSED
+                eventSourcing.eventStore.acknowledgeEvent$(evt, 'ms-devices-report_mbe_handler')
+            ));
+    }
+
+    /**
+     * Generates a map that assocs each Event with its handler
+     */
+    generateAggregateEventsArray() {
+        return [
+            { aggregateType: 'Device', eventType: 'DeviceGeneralInformationReported' }
+        ];
     }
 
     /**

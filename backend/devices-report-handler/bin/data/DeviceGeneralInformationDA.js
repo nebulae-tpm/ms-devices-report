@@ -13,7 +13,7 @@ class DeviceGeneralInformationDA {
      */
     static getDeviceGeneralInformation$(sn) {
         const collection = mongoDB.db.collection(CollectionName);
-        return Rx.Observable.fromPromise(collection.findOne({ sn }));
+        return Rx.Observable.defer(() => collection.findOne({ sn }));
     }
 
     /**
@@ -37,7 +37,7 @@ class DeviceGeneralInformationDA {
             update['$set'][prop.key] = prop.value;
         });
 
-        return Rx.Observable.fromPromise(
+        return Rx.Observable.defer(() =>
             collection.updateOne(
                 { sn },
                 update,

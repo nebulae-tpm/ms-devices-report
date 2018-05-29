@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "node bin/server.js",
+    "prepare": "node bin/prepare.js",
     "test": "./node_modules/.bin/mocha --recursive --reporter spec"
   },
   "directories": {
