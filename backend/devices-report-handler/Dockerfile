@@ -1,4 +1,4 @@
-FROM node:8.9-alpine
+FROM node:9.11-alpine
 ENV NODE_ENV production
 WORKDIR /nebulae/app
 COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
