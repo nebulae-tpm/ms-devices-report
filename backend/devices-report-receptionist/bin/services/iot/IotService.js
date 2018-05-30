@@ -14,9 +14,7 @@ class IotService {
 
     start$() {
         return Rx.Observable.create(observer => {
-            this.subscription = this.broker.getMessageListener$([process.env.IOT_BROKER_TOPIC])
-                .map(msg => msg.data)
-                .concatMap(data => deviceGeneralInformation.handleReportDeviceGeneralInformation$(data))
+            this.subscription = this.processIncomingMessages$()
                 .subscribe(
                     ({ storeResult, brokerResult }) => {
                         // console.log(
@@ -34,7 +32,19 @@ class IotService {
             observer.next('IotService listening messages')
             observer.complete();
         });
+    }
 
+    processIncomingMessages$() {
+        return this.broker.getMessageListener$([process.env.IOT_BROKER_TOPIC])
+            .map(msg => msg.data)
+            .filter(data => data && data.state && data.state.sDv)
+            .groupBy(data => data.state.sDv)
+            .mergeMap( deviceGroup => 
+                deviceGroup.buffer(deviceGroup.throttleTime(500))
+                .map( arr =>arr.sort())
+                .mergeMap(arr => Rx.Observable.from(arr))
+            )
+            .concatMap(data => deviceGeneralInformation.handleReportDeviceGeneralInformation$(data));
     }
 
     stop$s() {

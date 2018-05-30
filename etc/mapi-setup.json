@@ -1,0 +1,8 @@
+[
+    {
+        "name": "device-report",
+        "type": "graphql",        
+        "src": "api/gateway/graphql/device-report-handler",
+        "preBuildCommands": []
+    }
+]

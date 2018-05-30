@@ -1,0 +1,10 @@
+type AlarmThresholds {
+  ramThreshold: String
+  cpuThreshold: String
+  sdThreshold: String
+  tempThreshold: String
+}
+
+type Query {
+  getDeviceAlarmThresholds: AlarmThresholds
+}

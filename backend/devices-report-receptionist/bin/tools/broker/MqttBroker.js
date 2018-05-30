@@ -58,7 +58,7 @@ class MqttBroker {
         return Rx.Observable.from(topics)
             .filter(topic => this.listeningTopics.indexOf(topic) === -1)
             .mergeMap(topic =>
-                Rx.Observable.fromPromise(this.mqttClient.subscribe(topic))
+                Rx.Observable.defer( () => this.mqttClient.subscribe(topic))
                     .map(() => {
                         this.listeningTopics.push(topic);
                         return topic;
@@ -73,7 +73,7 @@ class MqttBroker {
      * Disconnect the broker and return an observable that completes when disconnected
      */
     disconnectBroker$() {
-        return Rx.Observable.fromPromise(this.mqttClient.end());
+        return Rx.Observable.defer( () => this.mqttClient.end());
     }
 }
 

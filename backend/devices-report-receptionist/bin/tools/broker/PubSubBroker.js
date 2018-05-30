@@ -40,6 +40,8 @@ class PubSubBroker {
      * Config the broker to listen to several topics
      * Returns an observable that resolves to a stream of subscribed topics
      * @param {Array} topics topics to listen
+     * 
+     * @returns {Rx.Observable}
      */
     configMessageListener$(topics) {
         return Rx.Observable.create((observer) => {
@@ -95,7 +97,7 @@ class PubSubBroker {
         if (!cachedTopic) {
             //if not cached, then tries to know if the topic exists
             const topic = this.pubsubClient.topic(topicName);
-            return Rx.Observable.fromPromise(topic.exists())
+            return Rx.Observable.defer( () => topic.exists())
                 .map(data => data[0])
                 .switchMap(exists => {
                     if (exists) {
@@ -119,7 +121,7 @@ class PubSubBroker {
      * @param {string} topicName 
      */
     createTopic$(topicName) {
-        return Rx.Observable.fromPromise(this.pubsubClient.createTopic(topicName))
+        return Rx.Observable.defer( () => this.pubsubClient.createTopic(topicName))
             .switchMap(data => {
                 this.verifiedTopics[topicName] = this.pubsubClient.topic(topicName);
                 console.log(`Topic ${topicName} have been created and set into the cache`);
@@ -134,7 +136,7 @@ class PubSubBroker {
      */
     getSubscription$(topicName, subscriptionName) {
         return this.getTopic$(topicName)
-            .switchMap(topic => Rx.Observable.fromPromise(
+            .switchMap(topic => Rx.Observable.defer( () => 
                 topic.subscription(subscriptionName)
                     .get({ autoCreate: true }))
             ).map(results => results[0]);

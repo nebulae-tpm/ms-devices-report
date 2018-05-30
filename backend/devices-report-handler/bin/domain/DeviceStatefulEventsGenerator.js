@@ -73,6 +73,22 @@ class DeviceStatefulEventsGenerator {
             });
     }
 
+    /**
+     * get and return all alarm Thresholds
+     */
+    static getAlarmThresholds$() { 
+        return Rx.Observable.of(process.env)
+            .map(env => { 
+                return {
+                    ramThreshold: env.DEVICE_ALARM_CPU_USAGE_PERCENTAGE_MAX,
+                    tempThreshold: env.DEVICE_ALARM_TEMPERATURE_MAX,
+                    cpuThreshold: env.DEVICE_ALARM_CPU_USAGE_PERCENTAGE_MAX,
+                    sdThreshold: env.DEVICE_ALARM_VOLUME_USAGE_PERCENTAGE_MAX
+
+                }
+            })
+    }
+
 
     /**
      * Generates an observable that emits DeviceCpuUsageAlarmActivated or DeviceCpuUsageAlarmDeactivated based on the CPU usage
