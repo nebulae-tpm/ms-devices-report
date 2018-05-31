@@ -2,14 +2,16 @@
 
 const Rx = require('rxjs');
 const BrockerFactory = require('../../tools/broker/BrokerFactory');
-const deviceGeneralInformation = require('../../domain/DeviceGeneralInformation')();
+const deviceGeneralInformation = undefined;
+const IoTServiceHelper = require('./IoTServiceHelper');
 
 let instance;
 
 class IotService {
 
-    constructor() {
+    constructor() {        
         this.broker = new BrockerFactory(process.env.IOT_BROKER_TYPE).getBroker();
+        deviceGeneralInformation = require('../../domain/DeviceGeneralInformation')();
     }
 
     start$() {
@@ -35,17 +37,14 @@ class IotService {
     }
 
     processIncomingMessages$() {
-        return this.broker.getMessageListener$([process.env.IOT_BROKER_TOPIC])
+        const streamSource = this.broker.getMessageListener$([process.env.IOT_BROKER_TOPIC])
             .map(msg => msg.data)
-            .filter(data => data && data.state && data.state.sDv)
-            .groupBy(data => data.state.sDv)
-            .mergeMap( deviceGroup => 
-                deviceGroup.buffer(deviceGroup.throttleTime(500))
-                .map( arr =>arr.sort())
-                .mergeMap(arr => Rx.Observable.from(arr))
-            )
+            .filter(data => data && data.state && data.state.sDv);
+        return IoTServiceHelper.ensureOrderedStream$(streamSource)
             .concatMap(data => deviceGeneralInformation.handleReportDeviceGeneralInformation$(data));
     }
+
+    
 
     stop$s() {
         return Rx.Observable.create(observer => {
