@@ -65,7 +65,7 @@ class EventStoreService {
                 .mergeMap(evt => Rx.Observable.concat(
                     handler.fn.call(handler.obj, evt),
                     //MANDATORY:  ACKWOWLEDGE THIS EVENT WAS PROCESSED
-                    eventSourcing.eventStore.acknowledgeEvent$(evt, 'ms-devices_mbe_devices'),
+                    eventSourcing.eventStore.acknowledgeEvent$(evt, 'ms-devices-report_mbe_handlers'),
                 ))
                 .subscribe(
                     (evt) => console.log(`EventStoreService: ${eventType} process: ${evt}`),
