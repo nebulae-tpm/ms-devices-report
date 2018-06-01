@@ -8,7 +8,6 @@ while [ 0 ]; do
 	# exec lock
 	/mbinit --step 1 --podName "$(hostname)" --url "$MONGODB_URL" --buildVersion "$DOCKER_VERSION" --runLockVer "$LOCKVERSION" \
 		&& npm run sync-state
-           	#############################################################################
 
 	# exec wait
 	/mbinit --step 2 --podName "$(hostname)" --url "$MONGODB_URL" --buildVersion "$DOCKER_VERSION" --runLockVer "$LOCKVERSION" || continue

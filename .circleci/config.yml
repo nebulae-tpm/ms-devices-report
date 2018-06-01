@@ -149,7 +149,7 @@ jobs:
           command: |
             source ~/nebulae/repo/.circleci/scripts/gitChanged.sh
             cd ~/nebulae/repo/
-            cp ~/nebulae/go/mbinit ~/nebulae/repo/backend/devices-report-receptionist/
+            cp ~/nebulae/go/mbinit ~/nebulae/repo/backend/devices-report-handler/
             export DOCKERHUB_IMAGE=devices-report.backend.devices-report-handler
             export DOCKERHUB_TAG=0.1.0
             gitChanged backend/devices-report-handler || docker build  -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:latest ~/nebulae/repo/backend/devices-report-handler
