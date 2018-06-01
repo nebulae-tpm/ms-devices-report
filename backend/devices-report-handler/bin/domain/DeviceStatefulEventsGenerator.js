@@ -80,7 +80,7 @@ class DeviceStatefulEventsGenerator {
         return Rx.Observable.of(process.env)
             .map(env => { 
                 return {
-                    ramThreshold: env.DEVICE_ALARM_CPU_USAGE_PERCENTAGE_MAX,
+                    ramThreshold: env.DEVICE_ALARM_RAM_USAGE_PERCENTAGE_MAX,
                     tempThreshold: env.DEVICE_ALARM_TEMPERATURE_MAX,
                     cpuThreshold: env.DEVICE_ALARM_CPU_USAGE_PERCENTAGE_MAX,
                     sdThreshold: env.DEVICE_ALARM_VOLUME_USAGE_PERCENTAGE_MAX

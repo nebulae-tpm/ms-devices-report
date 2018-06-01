@@ -57,14 +57,21 @@ class EventStoreService {
     subscribeEventHandler({ aggregateType, eventType, onErrorHandler, onCompleteHandler }) {
         const handler = this.functionMap[eventType];
 
-        const subscription = eventSourcing.eventStore.getEventListener$(aggregateType)
-            .filter(evt => evt.et === eventType)
-            .mergeMap(evt => handler.fn.call(handler.obj, evt))
-            .subscribe(
-                (evt) => console.log(`EventStoreService: ${eventType} process: ${evt}`),
-                onErrorHandler,
-                onCompleteHandler
-            );
+        const subscription =
+            //MANDATORY:  AVOIDS ACK REGISTRY DUPLICATIONS
+            eventSourcing.eventStore.ensureAcknowledgeRegistry$(aggregateType)
+                .switchMap(() => eventSourcing.eventStore.getEventListener$(aggregateType, 'ms-devices-report_mbe_handler'))
+                .filter(evt => evt.et === eventType)
+                .mergeMap(evt => Rx.Observable.concat(
+                    handler.fn.call(handler.obj, evt),
+                    //MANDATORY:  ACKWOWLEDGE THIS EVENT WAS PROCESSED
+                    eventSourcing.eventStore.acknowledgeEvent$(evt, 'ms-devices_mbe_devices'),
+                ))
+                .subscribe(
+                    (evt) => console.log(`EventStoreService: ${eventType} process: ${evt}`),
+                    onErrorHandler,
+                    onCompleteHandler
+                );
         this.subscriptions.push({ aggregateType, eventType, handlerName: handler.fn.name, subscription });
         return { aggregateType, eventType, handlerName: `${handler.obj.name}.${handler.fn.name}` };
     }

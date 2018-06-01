@@ -1,6 +1,6 @@
 {
   "name": "@nebulae-tpm/devices-report-receptionist",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "recieves all incoming Device General Information reports from IoT, transform them and push them to EventSourcing ",
   "main": "server.js",
   "bin": {
@@ -15,7 +15,7 @@
     "test": "test"
   },
   "dependencies": {
-    "@nebulae/event-store": "^0.1.6",
+    "@nebulae/event-store": "^0.3.3",
     "async-mqtt": "^1.0.1",
     "rxjs": "^5.5.10"
   },

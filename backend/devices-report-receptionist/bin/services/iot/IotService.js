@@ -2,7 +2,7 @@
 
 const Rx = require('rxjs');
 const BrockerFactory = require('../../tools/broker/BrokerFactory');
-const deviceGeneralInformation = undefined;
+const deviceGeneralInformation = require('../../domain/DeviceGeneralInformation')();
 const IoTServiceHelper = require('./IoTServiceHelper');
 
 let instance;
@@ -11,7 +11,6 @@ class IotService {
 
     constructor() {        
         this.broker = new BrockerFactory(process.env.IOT_BROKER_TYPE).getBroker();
-        deviceGeneralInformation = require('../../domain/DeviceGeneralInformation')();
     }
 
     start$() {
