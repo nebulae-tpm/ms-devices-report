@@ -131,6 +131,7 @@ class DeviceGeneralInformationFormatter {
                     total: vol.tV,
                     type: vol.tp,
                     unit: vol.uI,
+                    timestamp: state.t
                 };
                 if (volume.type === 'MEM') {
                     formatted.state.system.ram = volume;
