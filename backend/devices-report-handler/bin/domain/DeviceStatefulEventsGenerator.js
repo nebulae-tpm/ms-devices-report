@@ -52,7 +52,7 @@ class DeviceStatefulEventsGenerator {
         const properties = [{ key: 'temperatureAlarmOn', value: alarmOn }];
         return DeviceGeneralInformationDA.updateDeviceGenearlInformation$(evt.aid, properties, evt.av, evt.timestamp)
             .mergeMap(result => {
-                return (result.modifiedCount > 0 || result.upsertedCount > 0)
+                return (result.ok)
                     ? Rx.Observable.of(alarmOn)
                     : Rx.Observable.throw(
                         new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${JSON.stringify({ sn: evt.aid, properties, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp })}`));
@@ -112,7 +112,7 @@ class DeviceStatefulEventsGenerator {
         const properties = [{ key: 'cpuUsageAlarmOn', value: alarmOn }];
         return DeviceGeneralInformationDA.updateDeviceGenearlInformation$(evt.aid, properties, evt.av, evt.timestamp)
             .mergeMap(result => {
-                return (result.modifiedCount > 0 || result.upsertedCount > 0)
+                return (result.ok)
                     ? Rx.Observable.of(alarmOn)
                     : Rx.Observable.throw(
                         new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${JSON.stringify({ sn: evt.aid, properties, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp })}`));
@@ -205,7 +205,7 @@ class DeviceStatefulEventsGenerator {
                 const properties = [{ key: `${volume.type}VolumeUsageAlarmOn`, value: alarmOn }];
                 return DeviceGeneralInformationDA.updateDeviceGenearlInformation$(evt.aid, properties, evt.av, evt.timestamp)
                     .mergeMap(result => {
-                        return (result.modifiedCount > 0 || result.upsertedCount > 0)
+                        return (result.ok)
                             ? Rx.Observable.of({ eventType, currentUsage, alarmOn, volume })
                             : Rx.Observable.throw(
                                 new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${JSON.stringify({ sn: evt.aid, properties, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp })}`));
@@ -243,7 +243,7 @@ class DeviceStatefulEventsGenerator {
         const properties = [{ key: 'connected', value: connected }];
         return DeviceGeneralInformationDA.updateDeviceGenearlInformation$(evt.aid, properties, evt.av, evt.timestamp)
             .mergeMap(result => {
-                return (result.modifiedCount > 0 || result.upsertedCount > 0)
+                return (result.ok)
                     ? Rx.Observable.of(connected)
                     : Rx.Observable.throw(
                         new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${JSON.stringify({ sn: evt.aid, properties, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp })}`));
