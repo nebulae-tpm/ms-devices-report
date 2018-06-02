@@ -34,7 +34,16 @@ class DeviceGeneralInformationDA {
             }
         };
         properties.forEach(prop => {
-            update['$set'][prop.key] = prop.value;
+            if (Array.isArray(prop.value)) {
+                update['$set'][prop.key] = prop.value;
+            } else {
+                Object.keys(prop.value).forEach(function (innerKey) {
+                    if(prop.value[innerKey] !== undefined){
+                        update['$set'][`${prop.key}.${innerKey}`] = prop.value[innerKey];
+                    }                    
+                });
+            }
+
         });
 
         return Rx.Observable.defer(() =>
