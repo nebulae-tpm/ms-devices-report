@@ -157,7 +157,7 @@ describe('BACKEND: devices-report-handler', function () {
                         expect(brokerResult.messageId).to.not.be.undefined
                     },
                     (error) => {
-                        console.error(`handleReportDeviceGeneralInformation failed to proccess incoming msg`, error);
+                        console.error(`handleReportDeviceGeneralInformation failed to process incoming msg`, error);
                         return done(error);
                     },
                     () => {

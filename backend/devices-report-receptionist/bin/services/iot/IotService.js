@@ -25,7 +25,7 @@ class IotService {
                         // `);
                     },
                     (error) => {
-                        console.error(`IotService failed to proccess incoming msg`, error);
+                        console.error(`IotService failed to process incoming msg`, error);
                         process.exit(1);
                     },
                     () => console.log('IotService stopped')

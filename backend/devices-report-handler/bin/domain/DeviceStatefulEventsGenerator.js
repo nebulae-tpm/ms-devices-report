@@ -156,7 +156,7 @@ class DeviceStatefulEventsGenerator {
         const properties = [{ key: 'ramUsageAlarmOn', value: alarmOn }];
         return DeviceGeneralInformationDA.updateDeviceGenearlInformation$(evt.aid, properties, evt.av, evt.timestamp)
             .mergeMap(result => {
-                return (result.modifiedCount > 0 || result.upsertedCount > 0)
+                return (result.ok)
                     ? Rx.Observable.of(alarmOn)
                     : Rx.Observable.throw(
                         new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${JSON.stringify({ sn: evt.aid, properties, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp })}`));
