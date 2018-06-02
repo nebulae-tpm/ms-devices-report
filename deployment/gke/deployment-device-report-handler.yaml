@@ -15,7 +15,7 @@ spec:
         app: dev-rep-handler
     spec:      
       containers:
-      - image: nebulaetpm/devices-report.backend.devices-report-handler:0.1.7
+      - image: nebulaetpm/devices-report.backend.devices-report-handler:0.1.8
         name: dev-rep-handler
         volumeMounts:
         - name: google-application-credentials
@@ -60,7 +60,7 @@ spec:
           value: /etc/GOOGLE_APPLICATION_CREDENTIALS/gcloud-service-key.json
         # RESET LOCK INITIALIZE BACKED
         - name: LOCKVERSION
-          value: "0.0.3"
+          value: "cries in despair"
       volumes:
       - name: google-application-credentials
         secret:

@@ -24,10 +24,7 @@ class DeviceStateEventGenerator {
             .mergeMap(({ sn, properties, aggregateVersion, aggregateVersionTimestamp }) =>
                 DeviceGeneralInformationDA.updateDeviceGenearlInformation$(sn, properties, aggregateVersion, aggregateVersionTimestamp)
                     .mergeMap(result => {
-                        return (result.ok)
-                            ? Rx.Observable.of({ sn, properties, aggregateVersion, aggregateVersionTimestamp })
-                            : Rx.Observable.throw(
-                                new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${JSON.stringify({ sn, properties, aggregateVersion, aggregateVersionTimestamp })}`));
+                        return Rx.Observable.of({ sn, properties, aggregateVersion, aggregateVersionTimestamp });                        
                     }))
             // now lets split the changed properties and emit them one by one
             .mergeMap(({ sn, properties, aggregateVersion, aggregateVersionTimestamp }) => {

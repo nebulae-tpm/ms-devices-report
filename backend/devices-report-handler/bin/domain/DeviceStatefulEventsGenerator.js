@@ -52,10 +52,7 @@ class DeviceStatefulEventsGenerator {
         const properties = [{ key: 'temperatureAlarmOn', value: alarmOn }];
         return DeviceGeneralInformationDA.updateDeviceGenearlInformation$(evt.aid, properties, evt.av, evt.timestamp)
             .mergeMap(result => {
-                return (result.ok)
-                    ? Rx.Observable.of(alarmOn)
-                    : Rx.Observable.throw(
-                        new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${JSON.stringify({ sn: evt.aid, properties, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp })}`));
+                return Rx.Observable.of(alarmOn)                    
             })
             .map(alarmOn => {
                 return new Event({
@@ -112,10 +109,7 @@ class DeviceStatefulEventsGenerator {
         const properties = [{ key: 'cpuUsageAlarmOn', value: alarmOn }];
         return DeviceGeneralInformationDA.updateDeviceGenearlInformation$(evt.aid, properties, evt.av, evt.timestamp)
             .mergeMap(result => {
-                return (result.ok)
-                    ? Rx.Observable.of(alarmOn)
-                    : Rx.Observable.throw(
-                        new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${JSON.stringify({ sn: evt.aid, properties, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp })}`));
+                return Rx.Observable.of(alarmOn);
             })
             .map(alarmOn => {
                 return new Event({
@@ -156,10 +150,7 @@ class DeviceStatefulEventsGenerator {
         const properties = [{ key: 'ramUsageAlarmOn', value: alarmOn }];
         return DeviceGeneralInformationDA.updateDeviceGenearlInformation$(evt.aid, properties, evt.av, evt.timestamp)
             .mergeMap(result => {
-                return (result.ok)
-                    ? Rx.Observable.of(alarmOn)
-                    : Rx.Observable.throw(
-                        new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${JSON.stringify({ sn: evt.aid, properties, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp })}`));
+                return Rx.Observable.of(alarmOn);
             })
             .map(alarmOn => {
                 return new Event({
@@ -205,10 +196,7 @@ class DeviceStatefulEventsGenerator {
                 const properties = [{ key: `${volume.type}VolumeUsageAlarmOn`, value: alarmOn }];
                 return DeviceGeneralInformationDA.updateDeviceGenearlInformation$(evt.aid, properties, evt.av, evt.timestamp)
                     .mergeMap(result => {
-                        return (result.ok)
-                            ? Rx.Observable.of({ eventType, currentUsage, alarmOn, volume })
-                            : Rx.Observable.throw(
-                                new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${JSON.stringify({ sn: evt.aid, properties, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp })}`));
+                        return Rx.Observable.of({ eventType, currentUsage, alarmOn, volume });
                     })
             })
             .map(({ eventType, currentUsage, alarmOn, volume }) => {
@@ -243,10 +231,7 @@ class DeviceStatefulEventsGenerator {
         const properties = [{ key: 'connected', value: connected }];
         return DeviceGeneralInformationDA.updateDeviceGenearlInformation$(evt.aid, properties, evt.av, evt.timestamp)
             .mergeMap(result => {
-                return (result.ok)
-                    ? Rx.Observable.of(connected)
-                    : Rx.Observable.throw(
-                        new Error(`DeviceGeneralInformationDA.updateDeviceGenearlInformation$ did not update any document: ${JSON.stringify({ sn: evt.aid, properties, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp })}`));
+                return Rx.Observable.of(connected);
             })
             .map(connected => {
                 return new Event({
