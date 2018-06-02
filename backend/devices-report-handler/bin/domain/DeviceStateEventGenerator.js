@@ -61,9 +61,11 @@ class DeviceStateEventGenerator {
         const diffs = [];
         Object.keys(report.state).forEach(key => {
             if (!deepEqual(report.state[key], storedInfo[key])) {
-                const diff = { key, value: { ...report.state[key] } };
-                if (!Array.isArray(diff.value)) {
-                    diff.timestamp = reportTimestamp;
+                let diff;
+                if (!Array.isArray(report.state[key])) {
+                    diff = { key, value: { ...report.state[key], timestamp: reportTimestamp } };
+                } else {
+                    diff = { key, value: report.state[key] }
                 }
                 diffs.push(diff);
             }

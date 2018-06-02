@@ -15,7 +15,7 @@ spec:
         app: dev-rep-handler
     spec:      
       containers:
-      - image: nebulaetpm/devices-report.backend.devices-report-handler:0.1.3
+      - image: nebulaetpm/devices-report.backend.devices-report-handler:0.1.4
         name: dev-rep-handler
         volumeMounts:
         - name: google-application-credentials
