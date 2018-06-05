@@ -53,7 +53,8 @@ class DeviceStateEventGenerator {
      * @param {*} report 
      * @param {*} storedInfo 
      */
-    static compareAndGetStateDifferences(evt, report, storedInfo) {
+    static compareAndGetStateDifferences(evt, report, cpStoredInfo) {
+        const storedInfo = { ...cpStoredInfo };
         const reportTimestamp = report.timestamp;
         delete report.state.timestamp;
         const diffs = [];
@@ -62,6 +63,12 @@ class DeviceStateEventGenerator {
                 if (storedInfo[key]) {
                     delete storedInfo[key].timestamp;
                     ObjectTools.clean(storedInfo[key]);
+                    Object.keys(storedInfo[key])
+                        .filter(innerProp => !report.state[key].hasOwnProperty(innerProp))
+                        .forEach(undesiredProp => {
+                            delete storedInfo[key][undesiredProp];
+                        });
+
                 }
                 if (report.state[key]) {
                     ObjectTools.clean(report.state[key]);
