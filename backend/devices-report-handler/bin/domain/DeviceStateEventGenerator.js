@@ -58,9 +58,14 @@ class DeviceStateEventGenerator {
         delete report.state.timestamp;
         const diffs = [];
         Object.keys(report.state).forEach(key => {
-            if (ObjectTools.isObject(storedInfo[key])) {
-                delete storedInfo[key].timestamp;
-                ObjectTools.clean(storedInfo[key]);
+            if (ObjectTools.isObject(report.state[key])) {
+                if(storedInfo[key]){
+                    delete storedInfo[key].timestamp;
+                    ObjectTools.clean(storedInfo[key]);
+                }                                
+                if (report.state[key]) {
+                    ObjectTools.clean(report.state[key]);
+                }
             }
 
             if (!deepEqual(report.state[key], storedInfo[key])) {
@@ -76,7 +81,7 @@ class DeviceStateEventGenerator {
         return { sn: evt.aid, properties: diffs, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp };
     }
 
-    
+
 }
 
 module.exports = DeviceStateEventGenerator;
