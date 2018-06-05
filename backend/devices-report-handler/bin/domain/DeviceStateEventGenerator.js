@@ -6,7 +6,8 @@ const DeviceGeneralInformationDA = require('../data/DeviceGeneralInformationDA')
 const deepEqual = require('deep-equal');
 const eventSourcing = require('../tools/EventSourcing')();
 const camelCase = require('camelcase');
-const nmea = require('node-nmea')
+const nmea = require('node-nmea');
+const ObjectTools = require('../tools/ObjectTools');
 
 class DeviceStateEventGenerator {
 
@@ -24,7 +25,7 @@ class DeviceStateEventGenerator {
             .mergeMap(({ sn, properties, aggregateVersion, aggregateVersionTimestamp }) =>
                 DeviceGeneralInformationDA.updateDeviceGenearlInformation$(sn, properties, aggregateVersion, aggregateVersionTimestamp)
                     .mergeMap(result => {
-                        return Rx.Observable.of({ sn, properties, aggregateVersion, aggregateVersionTimestamp });                        
+                        return Rx.Observable.of({ sn, properties, aggregateVersion, aggregateVersionTimestamp });
                     }))
             // now lets split the changed properties and emit them one by one
             .mergeMap(({ sn, properties, aggregateVersion, aggregateVersionTimestamp }) => {
@@ -57,6 +58,11 @@ class DeviceStateEventGenerator {
         delete report.state.timestamp;
         const diffs = [];
         Object.keys(report.state).forEach(key => {
+            if (ObjectTools.isObject(storedInfo[key])) {
+                delete storedInfo[key].timestamp;
+                ObjectTools.clean(storedInfo[key]);
+            }
+
             if (!deepEqual(report.state[key], storedInfo[key])) {
                 let diff;
                 if (!Array.isArray(report.state[key])) {
@@ -69,6 +75,8 @@ class DeviceStateEventGenerator {
         });
         return { sn: evt.aid, properties: diffs, aggregateVersion: evt.av, aggregateVersionTimestamp: evt.timestamp };
     }
+
+    
 }
 
 module.exports = DeviceStateEventGenerator;

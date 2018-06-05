@@ -71,8 +71,7 @@ class DeviceEventsEventGenerator {
                     data,
                     user: "SYSTEM.DevicesReport.devices-report-handler"
                 });
-            });
-        return Rx.Observable.empty();
+            });        
     }
 
 
