@@ -16,6 +16,10 @@ class ObjectTools {
     static isArray(a) {
         return (!!a) && (a.constructor === Array);
     }
+
+    static isEmptyObject(obj) {
+        return !Object.keys(obj).length;
+    }
 }
 
 

@@ -11,6 +11,7 @@ const deepEqual = require('deep-equal');
 const eventSourcing = require('../tools/EventSourcing')();
 const camelCase = require('camelcase');
 const nmea = require('node-nmea')
+const ObjectTools = require('../tools/ObjectTools');
 
 let instance;
 

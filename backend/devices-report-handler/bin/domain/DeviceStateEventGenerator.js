@@ -59,16 +59,16 @@ class DeviceStateEventGenerator {
         const diffs = [];
         Object.keys(report.state).forEach(key => {
             if (ObjectTools.isObject(report.state[key])) {
-                if(storedInfo[key]){
+                if (storedInfo[key]) {
                     delete storedInfo[key].timestamp;
                     ObjectTools.clean(storedInfo[key]);
-                }                                
+                }
                 if (report.state[key]) {
                     ObjectTools.clean(report.state[key]);
                 }
             }
 
-            if (!deepEqual(report.state[key], storedInfo[key])) {
+            if (!ObjectTools.isEmptyObject(report.state[key]) && !deepEqual(report.state[key], storedInfo[key])) {
                 let diff;
                 if (!Array.isArray(report.state[key])) {
                     diff = { key, value: { ...report.state[key], timestamp: reportTimestamp } };
