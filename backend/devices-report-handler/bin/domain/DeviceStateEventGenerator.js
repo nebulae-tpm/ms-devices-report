@@ -64,7 +64,7 @@ class DeviceStateEventGenerator {
                     delete storedInfo[key].timestamp;
                     ObjectTools.clean(storedInfo[key]);
                     Object.keys(storedInfo[key])
-                        .filter(innerProp => !report.state[key].hasOwnProperty(innerProp))
+                        .filter(innerProp => !report.state[key].hasOwnProperty(innerProp) || report.state[key][innerProp] === undefined)
                         .forEach(undesiredProp => {
                             delete storedInfo[key][undesiredProp];
                         });

@@ -73,8 +73,8 @@ class DeviceGeneralInformationFormatter {
                 mainApp: {
                     appVers: state.AVer,
                     appTablesVers: state.ATVer,
-                    usosTranspCount: state.uTC,
-                    errsTranspCount: state.eTC,
+                    usosTranspCount: (state.uTC && state.uTC > 0) ? state.uTC : undefined,
+                    errsTranspCount: (state.eTC && state.eTC > 0) ? state.eTC : undefined,
                 },
                 system: {
                     temperature: !state.gs ? undefined : state.gs.temp,
@@ -158,7 +158,7 @@ class DeviceGeneralInformationFormatter {
         // at the present time this event is sent within the state.mainApp
         // so we need to get the value, remove ir from the state.mainApp and create a event instead
 
-        if (formatted.state.mainApp.usosTranspCount !== undefined) {
+        if (formatted.state.mainApp.usosTranspCount !== undefined && formatted.state.mainApp.usosTranspCount > 0) {
             if (!formatted.events) {
                 formatted.events = [];
             }
@@ -172,7 +172,7 @@ class DeviceGeneralInformationFormatter {
         }
         // at the present time this event is sent within the state.mainApp
         // so we need to get the value, remove ir from the state.mainApp and create a event instead
-        if (formatted.state.mainApp.errsTranspCount !== undefined) {
+        if (formatted.state.mainApp.errsTranspCount !== undefined && formatted.state.mainApp.errsTranspCount > 0) {
             if (!formatted.events) {
                 formatted.events = [];
             }
