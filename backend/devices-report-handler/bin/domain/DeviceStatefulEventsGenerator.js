@@ -52,7 +52,7 @@ class DeviceStatefulEventsGenerator {
         const properties = [{ key: 'temperatureAlarmOn', value: alarmOn }];
         return DeviceGeneralInformationDA.updateDeviceGenearlInformation$(evt.aid, properties, evt.av, evt.timestamp)
             .mergeMap(result => {
-                return Rx.Observable.of(alarmOn)                    
+                return Rx.Observable.of(alarmOn)
             })
             .map(alarmOn => {
                 return new Event({
@@ -73,9 +73,9 @@ class DeviceStatefulEventsGenerator {
     /**
      * get and return all alarm Thresholds
      */
-    static getAlarmThresholds$() { 
+    static getAlarmThresholds$() {
         return Rx.Observable.of(process.env)
-            .map(env => { 
+            .map(env => {
                 return {
                     ramThreshold: env.DEVICE_ALARM_RAM_USAGE_PERCENTAGE_MAX,
                     tempThreshold: env.DEVICE_ALARM_TEMPERATURE_MAX,
@@ -139,7 +139,7 @@ class DeviceStatefulEventsGenerator {
         }
         const maxRamUsage = process.env.DEVICE_ALARM_RAM_USAGE_PERCENTAGE_MAX || 70;
         const currentUsage = Math.round((report.state.system.ram.current / report.state.system.ram.total) * 100);
-        
+
         const alarmOn = currentUsage > maxRamUsage;
 
         if (storedInfo.ramUsageAlarmOn === alarmOn) {
@@ -223,29 +223,28 @@ class DeviceStatefulEventsGenerator {
      * @param {*} storedInfo the materialized view stored in db
      */
     static connectedEventGenerator$(evt, report, storedInfo, connected) {
-        if (storedInfo.connected === connected) {
-            return Rx.Observable.empty();
-        }
-
+        const connectStatusChanged = storedInfo.connected !== connected;
         const eventType = 'DeviceConnected';
-        const properties = [{ key: 'connected', value: connected }];
+        const properties = [{ key: 'connected', value: connected }, { key: 'lastCommTimestamp', value: Date.now() }];
         return DeviceGeneralInformationDA.updateDeviceGenearlInformation$(evt.aid, properties, evt.av, evt.timestamp)
-            .mergeMap(result => {
-                return Rx.Observable.of(connected);
-            })
-            .map(connected => {
-                return new Event({
-                    eventType,
-                    eventTypeVersion: 1,
-                    aggregateType: 'Device',
-                    aggregateId: evt.aid,
-                    data: {
-                        connected: connected,
-                        timestamp: report.timestamp
-                    },
-                    user: "SYSTEM.DevicesReport.devices-report-handler"
-                });
-            });
+            .mergeMap(result =>
+                connectStatusChanged
+                    ? Rx.Observable.of(connected)
+                        .map(connected => {
+                            return new Event({
+                                eventType,
+                                eventTypeVersion: 1,
+                                aggregateType: 'Device',
+                                aggregateId: evt.aid,
+                                data: {
+                                    connected: connected,
+                                    timestamp: report.timestamp
+                                },
+                                user: "SYSTEM.DevicesReport.devices-report-handler"
+                            });
+                        })
+                    : Rx.Observable.empty()
+            );
     }
 
 

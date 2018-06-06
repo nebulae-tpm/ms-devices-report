@@ -1,5 +1,6 @@
 const Rx = require('rxjs');
 const deviceGeneralInformation = require('../../domain/DeviceGeneralInformation')();
+const evalDisconnectedDevicesJob = require('../../domain/EvalDisconnectedDevicesJob')();
 const eventSourcing = require('../../tools/EventSourcing')();
 
 /**
@@ -83,6 +84,7 @@ class EventStoreService {
     */
     syncState$() {
         return Rx.Observable.from(this.aggregateEventsArray)
+            .filter(aggregate => aggregate.aggregateType !== 'Cronjob')// do not want to exec cronjob routines during sync
             .concatMap(params => this.subscribeEventRetrieval$(params))
     }
 
@@ -110,7 +112,8 @@ class EventStoreService {
      */
     generateAggregateEventsArray() {
         return [
-            { aggregateType: 'Device', eventType: 'DeviceGeneralInformationReported' }
+            { aggregateType: 'Device', eventType: 'DeviceGeneralInformationReported' },
+            { aggregateType: 'Cronjob', eventType: 'EvalDisconnectedDevicesJobTriggered' },
         ];
     }
 
@@ -119,7 +122,8 @@ class EventStoreService {
      */
     generateFunctionMap() {
         return {
-            'DeviceGeneralInformationReported': { fn: deviceGeneralInformation.handleDeviceGeneralInformationReportedEvent$, obj: deviceGeneralInformation }
+            'DeviceGeneralInformationReported': { fn: deviceGeneralInformation.handleDeviceGeneralInformationReportedEvent$, obj: deviceGeneralInformation },
+            'EvalDisconnectedDevicesJobTriggered': { fn: evalDisconnectedDevicesJob.handleEvalDisconnectedDevicesJobTriggeredEvent$, obj: evalDisconnectedDevicesJob },
         };
     }
 
