@@ -68,7 +68,6 @@ class DeviceStateEventGenerator {
                         .forEach(undesiredProp => {
                             delete storedInfo[key][undesiredProp];
                         });
-
                 }
                 if (report.state[key]) {
                     ObjectTools.clean(report.state[key]);
