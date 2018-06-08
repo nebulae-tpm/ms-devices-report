@@ -98,7 +98,7 @@ class DeviceStatefulEventsGenerator {
             return Rx.Observable.empty();
         }
         const maxCpuUsage = process.env.DEVICE_ALARM_CPU_USAGE_PERCENTAGE_MAX || 50;
-        const currentUsage = Math.max(report.state.system.cpuStatus[0], report.state.system.cpuStatus[1]);
+        const currentUsage = Math.max(report.state.system.cpuStatus[1], report.state.system.cpuStatus[2]);
         const alarmOn = currentUsage > maxCpuUsage;
 
         if (storedInfo.cpuUsageAlarmOn === alarmOn) {
