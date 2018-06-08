@@ -27,7 +27,7 @@ class EvalDisconnectedDevicesJob {
         //2 - update each device to indicate is offline
         //3 - generate and emit event (of type DeviceConnected)
         return Rx.Observable.of(event)
-            .mergeMap(evt => DeviceGeneralInformationDA.getConnectedDevicesThatHaventSentDataForMinutes$(evt.threshold))
+            .mergeMap(evt => DeviceGeneralInformationDA.getConnectedDevicesThatHaventSentDataForMinutes$(evt.data.threshold))
             .mergeMap(device =>
                 DeviceGeneralInformationDA.updateDeviceGenearlInformation$(device.sn, properties)
                     .mapTo(device))
