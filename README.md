@@ -1,9 +1,11 @@
+
 # ms-devices-report
+![NebulaE](docs/images/nebula.png "Nebula Engineering SAS")
 
 # Table of contents
-1. [Introduction] (#introduction)
-2. [Project Structure] (#structure)
-n. [LICENSE] (#license)
+1. [Introduction](#introduction)
+2. [Project Structure](#structure)
+3. [License](#license)
 
 # Introduction <a name="introduction"></a>
 Some introduction text, formatted in heading 2 style
@@ -12,7 +14,7 @@ Some introduction text, formatted in heading 2 style
 Some introduction text, formatted in heading 2 style
 
 
-# LICENSE <a name="license"></a>
+# License <a name="license"></a>
 
 Copyright 2018 Nebula Engineering SAS
 
