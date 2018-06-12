@@ -10,19 +10,20 @@ Some introduction text, formatted in heading 2 style
 
 # Project structure <a name="structure"></a>
 
-├── README.md                           => this doc
-├── api                                 => Micro-APIs
-│   └── gateway                         => Micro-API for [GateWay API](https://github.com/nebulae-tpm/gateway)
-├── backend                             => Micro-BackEnds
-│   ├── devices-report-receptionist     => Micro-BackEnd responsible for publishing IoT devices reports
-│   └── devices-report-handler          => Micro-BackEnd responsible for Handling IoT devices reports published by devices-report-receptionist
-├── deployment                          => Automatic deployment strategies
-│   ├── compose                         => Docker-Compose environment for local development
-│   └── gke                             => Google Kubernetes Engine deployment file descriptors
-├── docs                                => Documentation resources
-│   └── images
-└── etc                                 => Micro-Service config Files.
-    └── mapi-setup.json                 => Micro-API setup file
+├── README.md                           => this doc  
+├── api                                 => Micro-APIs  
+│   └── gateway                         => Micro-API for [GateWay API](https://github.com/nebulae-tpm/gateway)  
+├── backend                             => Micro-BackEnds  
+│   ├── devices-report-receptionist     => Micro-BackEnd responsible for publishing IoT devices reports  
+│   └── devices-report-handler          => Micro-BackEnd responsible for Handling IoT devices reports published by devices-report-receptionist  
+├── deployment                          => Automatic deployment strategies  
+│   ├── compose                         => Docker-Compose environment for local development  
+│   └── gke                             => Google Kubernetes Engine deployment file descriptors  
+├── docs                                => Documentation resources  
+│   └── images  
+└── etc                                 => Micro-Service config Files.  
+    └── mapi-setup.json                 => Micro-API setup file  
+
 
 
 # License <a name="license"></a>
