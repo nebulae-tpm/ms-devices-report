@@ -238,7 +238,7 @@ class DeviceStatefulEventsGenerator {
                                 aggregateId: evt.aid,
                                 data: {
                                     connected: connected,
-                                    timestamp: report.timestamp
+                                    timestamp: Date.now()
                                 },
                                 user: "SYSTEM.DevicesReport.devices-report-handler"
                             });

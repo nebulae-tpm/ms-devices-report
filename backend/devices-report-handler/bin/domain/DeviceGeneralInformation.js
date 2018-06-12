@@ -39,7 +39,7 @@ class DeviceGeneralInformation {
             // 1 - Device State reports
             // 1 - Device Events reports
             .mergeMap(([evt, report, storedInfo]) =>
-                Rx.Observable.merge(
+                Rx.Observable.concat(
                     DeviceStateEventGenerator.getGenerator$(evt, report, storedInfo),
                     DeviceEventsEventGenerator.getGenerator$(evt, report, storedInfo),
                     DeviceStatefulEventsGenerator.getGenerator$(evt, report, storedInfo)
