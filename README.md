@@ -64,9 +64,11 @@ Note: You may find the GraphQL schema [here](api/gateway/graphql/device-report-h
 Gets the runtime threshold values used to generate CPU, RAM, Volumes and temperature alarms.  
 
 # BackEnd <a name="backend"></a>
-
+Backends are defined processes within a docker container.  
+Each process is responsible to build, run and maintain itself.  
 
 ## Recepcionist <a name="backend_recepcionist"></a>
+L
 
 # License <a name="license"></a>
 
