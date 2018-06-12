@@ -10,6 +10,7 @@ Some introduction text, formatted in heading 2 style
 
 # Project structure <a name="structure"></a>
 
+'''
 ├── README.md                           => this doc  
 ├── api                                 => Micro-APIs  
 │   └── gateway                         => Micro-API for [GateWay API](https://github.com/nebulae-tpm/gateway)  
@@ -23,7 +24,7 @@ Some introduction text, formatted in heading 2 style
 │   └── images  
 └── etc                                 => Micro-Service config Files.  
     └── mapi-setup.json                 => Micro-API setup file  
-
+'''
 
 
 # License <a name="license"></a>
