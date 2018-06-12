@@ -1,8 +1,18 @@
 ![NebulaE](docs/images/nebula.png "Nebula Engineering SAS")
 
+# Devices Report MicroService
+Some introduction text, formatted in heading 2 style  
+Some introduction text, formatted in heading 2 style  
+Some introduction text, formatted in heading 2 style  
+Some introduction text, formatted in heading 2 style  
+Some introduction text, formatted in heading 2 style  
+Some introduction text, formatted in heading 2 style  
+Some introduction text, formatted in heading 2 style  
+Some introduction text, formatted in heading 2 style  
+
+
 Table of Contents
 =================
-  * [Introduction](#introduction)
   * [Project Structure](#structure)
   * [FrontEnd](#frontend)
     *  [Environment variables](#frontend_env_vars)
@@ -17,14 +27,17 @@ Table of Contents
         *  [Environment variables](#backend_handlert_env_vars)
         *  [CronJobs](#backend_handler_cronjobs)
         *  [Event Sourcing](#backend_handler_eventsourcing)
+  * [Prepare development environment](#prepare_dev_env)
+  * [License](#license)
 
-# Introduction <a name="introduction"></a>
-Some introduction text, formatted in heading 2 style
 
 # Project structure <a name="structure"></a>
 
 ```
-├── README.md                           => this doc  
+.
+├── .circleci                           => CircleCI v2. config directory
+│   ├── config.yml
+│   └── scripts
 ├── api                                 => Micro-APIs  
 │   └── gateway                         => Micro-API for [GateWay API](https://github.com/nebulae-tpm/gateway)  
 ├── backend                             => Micro-BackEnds  
@@ -35,8 +48,9 @@ Some introduction text, formatted in heading 2 style
 │   └── gke                             => Google Kubernetes Engine deployment file descriptors  
 ├── docs                                => Documentation resources  
 │   └── images  
-└── etc                                 => Micro-Service config Files.  
-    └── mapi-setup.json                 => Micro-API setup file  
+├── etc                                 => Micro-Service config Files.  
+│   └── mapi-setup.json                 => Micro-API setup file  
+├── README.md                           => this doc
 ```
 
 
