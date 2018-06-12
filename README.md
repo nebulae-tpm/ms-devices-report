@@ -10,13 +10,13 @@ Table of Contents
     * [GraphQL](#api_graphql)
   * [BackEnd](#backend)
     *  [Recepcionist](#backend_recepcionist)
-      *  [Environment variables](#backend_recepcionist_env_vars)
-      *  [CronJobs](#backend_recepcionist_cronjobs)
-      *  [Event Sourcing](#backend_recepcionist_eventsourcing)
+        *  [Environment variables](#backend_recepcionist_env_vars)
+        *  [CronJobs](#backend_recepcionist_cronjobs)
+        *  [Event Sourcing](#backend_recepcionist_eventsourcing)
     *  [Handler](#backend_handler)
-      *  [Environment variables](#backend_handlert_env_vars)
-      *  [CronJobs](#backend_handler_cronjobs)
-      *  [Event Sourcing](#backend_handler_eventsourcing)
+        *  [Environment variables](#backend_handlert_env_vars)
+        *  [CronJobs](#backend_handler_cronjobs)
+        *  [Event Sourcing](#backend_handler_eventsourcing)
 
 # Introduction <a name="introduction"></a>
 Some introduction text, formatted in heading 2 style
