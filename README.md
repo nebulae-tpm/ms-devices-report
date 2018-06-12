@@ -19,7 +19,7 @@ This process is handle by two subprocess:
         *  [Environment variables](#backend_recepcionist_env_vars)
         *  [Event Sourcing](#backend_recepcionist_eventsourcing)
     *  [Handler](#backend_handler)
-        *  [Environment variables](#backend_handlert_env_vars)
+        *  [Environment variables](#backend_handler_env_vars)
         *  [CronJobs](#backend_handler_cronjobs)
         *  [Event Sourcing](#backend_handler_eventsourcing)
   * [Prepare development environment](#prepare_dev_env)
@@ -194,7 +194,7 @@ Keeps track of the state of every device in the system, records the state on the
 +------------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
 ```
 
-Notes: 
+#### Notes: 
   * ENV VARS for development are [here](backend/devices-report-handler/.env)
   * ENV VARS for production are [here](deployment/gke/deployment-device-report-handler.yaml)
 
