@@ -1,9 +1,22 @@
 ![NebulaE](docs/images/nebula.png "Nebula Engineering SAS")
 
-# Table of contents
-1. [Introduction](#introduction)
-2. [Project Structure](#structure)
-3. [License](#license)
+Table of Contents
+=================
+  * [Introduction](#introduction)
+  * [Project Structure](#structure)
+  * [FrontEnd](#frontend)
+    *  [Environment variables](#frontend_env_vars)
+  * [API](#api)
+    * [GraphQL](#api_graphql)
+  * [BackEnd](#backend)
+    *  [Recepcionist](#backend_recepcionist)
+      *  [Environment variables](#backend_recepcionist_env_vars)
+      *  [CronJobs](#backend_recepcionist_cronjobs)
+      *  [Event Sourcing](#backend_recepcionist_eventsourcing)
+    *  [Handler](#backend_handler)
+      *  [Environment variables](#backend_handlert_env_vars)
+      *  [CronJobs](#backend_handler_cronjobs)
+      *  [Event Sourcing](#backend_handler_eventsourcing)
 
 # Introduction <a name="introduction"></a>
 Some introduction text, formatted in heading 2 style
