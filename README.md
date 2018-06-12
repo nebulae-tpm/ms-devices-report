@@ -68,7 +68,55 @@ Backends are defined processes within a docker container.
 Each process is responsible to build, run and maintain itself.  
 
 ## Recepcionist <a name="backend_recepcionist"></a>
-L
+Embedded devices sends reports all the time, throught the IoT MQTT service, detailing current status (Eg. CPU, RAM, MEM, IPs) and events (Eg. Location, voltage peaks).  The recepcionist gathers these reports, uncompress them and push them to the event store so it can be available to this and any other microservice.
+
+### Environment variables <a name="backend_recepcionist_env_vars"></a>
+
+```
++--------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+|               VARIABLE               | TYPE   |                                          DESCRIPTION                                         |  DEF. | MANDATORY |
+|                                      |        |                                                                                              | VALUE |           |
++--------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| production                           | bool   | Production enviroment flag                                                                   | false |           |
++--------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| EVENT_STORE_BROKER_TYPE              | enum   | Event store broker type to use.                                                              |       |     X     |
+|                                      | string | Ops: PUBSUB, MQTT                                                                            |       |           |
++--------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| EVENT_STORE_BROKER_EVENTS_TOPIC      | enum   | Event store topic's name.                                                                    |       |     X     |
+|                                      | string |                                                                                              |       |           |
++--------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| EVENT_STORE_STORE_TYPE               | enum   | Event store storage type to use.                                                             |       |     X     |
+|                                      | string | Ops: MONGO                                                                                   |       |           |
++--------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| EVENT_STORE_STORE_URL                | string | Event store storage URL or connection string.                                                |       |     X     |
+|                                      |        | Eg.: mongodb://127.0.0.1:27017/test                                                          |       |           |
++--------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| EVENT_STORE_STORE_AGGREGATES_DB_NAME | string | Event store storage database name for Aggregates                                             |       |     X     |
+|                                      |        | Eg.: Aggregates                                                                              |       |           |
++--------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| EVENT_STORE_STORE_EVENTSTORE_DB_NAME | string | Event store storage database name prefix for Event Sourcing Events                           |       |     X     |
+|                                      |        | Eg.: EventStore                                                                              |       |           |
++--------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| IOT_BROKER_TYPE                      | enum   | IoT broker type to use.                                                                      |       |     X     |
+|                                      | string | Ops: PUBSUB, MQTT                                                                            |       |           |
++--------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| IOT_BROKER_TOPIC                     | string | IoT broker topic name                                                                        |       |     X     |
+|                                      |        | Eg.: devices-iot                                                                             |       |           |
++--------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| GOOGLE_APPLICATION_CREDENTIALS       | string | Production only.                                                                             |       |     X     |
+|                                      |        | Google service account key path to access google cloud resources.                            |       |           |
+|                                      |        |                                                                                              |       |           |
+|                                      |        | Eg.: /etc/GOOGLE_APPLICATION_CREDENTIALS/gcloud-service-key.json                             |       |           |
++--------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+| LOCKVERSION                          | string | Production only.                                                                             |       |     X     |
+|                                      |        | word or phrase used to evaluate if the sync task should be run before starting this backend. |       |           |
+|                                      |        | This value must be changed to force state sync task.                                         |       |           |
++--------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
+```
+
+Notes: 
+  * ENV VARS for development are [here](backend/devices-report-receptionist/.env)
+  * ENV VARS for production are [here](deployment/gke/deployment-device-report-recepcionist.yaml)
 
 # License <a name="license"></a>
 
