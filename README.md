@@ -120,9 +120,9 @@ Notes:
 ### Event Sourcing <a name="backend_recepcionist_eventsourcing"></a>
 Event sourcing events this Micro-BackEnd is subscribed to or is publishing
 
-Subscribed events:
+#### Subscribed events:
   * N/A
-Published events:
+#### Published events:
   * DeviceGeneralInformationReported: Device report itself
 
 ## Handler <a name="backend_handler"></a>
@@ -194,6 +194,10 @@ Keeps track of the state of every device in the system, records the state on the
 +------------------------------------------+--------+----------------------------------------------------------------------------------------------+-------+-----------+
 ```
 
+Notes: 
+  * ENV VARS for development are [here](backend/devices-report-handler/.env)
+  * ENV VARS for production are [here](deployment/gke/deployment-device-report-handler.yaml)
+
 ### CronJobs <a name="backend_handler_cronjobs"></a>
 Time-based jobs that are configured and triggered by the [CronJob MicroService](https://github.com/nebulae-tpm/ms-cronjob)
 
@@ -208,9 +212,9 @@ specs:
 ### Event Sourcing <a name="backend_handler_eventsourcing"></a>
 Event sourcing events this Micro-BackEnd is subscribed to or is publishing
 
-Subscribed events:
-  * DeviceGeneralInformationReported
-Published events:
+#### Subscribed events:
+  * DeviceGeneralInformationReported  
+#### Published events:
   * DeviceDeviceStateReported: device main footprint reported/changed
   * DeviceNetworkStateReported: device network data reported/changed
   * DeviceModemStateReported: device modem data reported/changed
