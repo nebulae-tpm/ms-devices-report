@@ -1,18 +1,11 @@
 ![NebulaE](docs/images/nebula.png "Nebula Engineering SAS")
 
 # Devices Report MicroService
-Some introduction text, formatted in heading 2 style  
-Some introduction text, formatted in heading 2 style  
-Some introduction text, formatted in heading 2 style  
-Some introduction text, formatted in heading 2 style  
-Some introduction text, formatted in heading 2 style  
-Some introduction text, formatted in heading 2 style  
-Some introduction text, formatted in heading 2 style  
-Some introduction text, formatted in heading 2 style  
 
+![Intro](docs/images/ms-devices-report_intro.png "Intro")
 
-Table of Contents
-=================
+# Table of Contents
+
   * [Project Structure](#structure)
   * [FrontEnd](#frontend)
     *  [Environment variables](#frontend_env_vars)
