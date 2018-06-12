@@ -1,16 +1,19 @@
 ![NebulaE](docs/images/nebula.png "Nebula Engineering SAS")
 
 # Devices Report MicroService
+The general porpouse of this service is to listen, format and publish data coming from Embedded Devices.  
+This process is handle by two subprocess:
+ * recepcionist: listen to incoming reports from every embedded devices throught the IoT MQTT Topic, then decompress the data and made them available to every service by publishing 'DeviceGeneralInformationReported' events to the event store.  
+ * handler: listen to 'DeviceGeneralInformationReported' events on the event store, formats and normalizes the data, then creates and mantains a persistent profile of each device so it can infer status differences and publish deltas.
 
 ![Intro](docs/images/ms-devices-report_intro.png "Intro")
 
 # Table of Contents
-
   * [Project Structure](#structure)
-  * [FrontEnd](#frontend)
-    *  [Environment variables](#frontend_env_vars)
+  * [FrontEnd](#frontend) - not yet available  
+    *  [Environment variables](#frontend_env_vars) - not yet available  
   * [API](#api)
-    * [GraphQL](#api_graphql)
+    * [GraphQL throught Gateway API](#api_gateway_graphql)
   * [BackEnd](#backend)
     *  [Recepcionist](#backend_recepcionist)
         *  [Environment variables](#backend_recepcionist_env_vars)
@@ -28,24 +31,42 @@
 
 ```
 .
-├── .circleci                           => CircleCI v2. config directory
-│   ├── config.yml
-│   └── scripts
+├── frontend                            => Micro-FrontEnds - not yet available  
+│   └── emi                             => Micro-FrontEnd for [EMI FrontEnd](https://github.com/nebulae-tpm/emi) - not yet available  
 ├── api                                 => Micro-APIs  
-│   └── gateway                         => Micro-API for [GateWay API](https://github.com/nebulae-tpm/gateway)  
+│   └── gateway                         => Micro-API for [Gateway API](https://github.com/nebulae-tpm/gateway)  
 ├── backend                             => Micro-BackEnds  
 │   ├── devices-report-receptionist     => Micro-BackEnd responsible for publishing IoT devices reports  
 │   └── devices-report-handler          => Micro-BackEnd responsible for Handling IoT devices reports published by devices-report-receptionist  
+├── etc                                 => Micro-Service config Files.  
 ├── deployment                          => Automatic deployment strategies  
 │   ├── compose                         => Docker-Compose environment for local development  
 │   └── gke                             => Google Kubernetes Engine deployment file descriptors  
+│   └── mapi-setup.json                 => Micro-API setup file  
+├── .circleci                           => CircleCI v2. config directory
+│   ├── config.yml
+│   └── scripts
 ├── docs                                => Documentation resources  
 │   └── images  
-├── etc                                 => Micro-Service config Files.  
-│   └── mapi-setup.json                 => Micro-API setup file  
-├── README.md                           => this doc
+├── README.md                           => This doc
 ```
 
+# API <a name="api"></a>
+Exposed interfaces to send Commands and Queries by the CQRS principles.  
+The MicroService exposes its interfaces as Micro-APIs that are nested on the general API.  
+
+## GraphQL throught Gateway API <a name="api_gateway_graphql"></a>
+These are the exposed GraphQL functions throught the [Gateway API](https://github.com/nebulae-tpm/gateway).  
+
+Note: You may find the GraphQL schema [here](api/gateway/graphql/device-report-handler/schema.gql)
+
+### getDeviceAlarmThresholds
+Gets the runtime threshold values used to generate CPU, RAM, Volumes and temperature alarms.  
+
+# BackEnd <a name="backend"></a>
+
+
+## Recepcionist <a name="backend_recepcionist"></a>
 
 # License <a name="license"></a>
 
