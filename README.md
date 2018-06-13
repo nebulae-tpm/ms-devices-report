@@ -4,7 +4,9 @@
 The general porpouse of this service is to listen, format and publish data coming from Embedded Devices.  
 This process is handle by two subprocess:
  * recepcionist: listen to incoming reports from every embedded devices throught the IoT MQTT Topic, then decompress the data and made them available to every service by publishing 'DeviceGeneralInformationReported' events to the event store.  
- * handler: listen to 'DeviceGeneralInformationReported' events on the event store, formats and normalizes the data, then creates and mantains a persistent profile of each device so it can infer status differences and publish deltas.
+ * handler: listen to 'DeviceGeneralInformationReported' events on the event store, formats and normalizes the data, then creates and mantains a persistent profile of each device so it can infer status differences and publish deltas.  
+   
+_This MicroService is built on top of NebulaE MicroService Framework.  Please see the [FrameWork project](https://github.com/NebulaEngineering/nebulae) to understand the full concept_**.
 
 ![Intro](docs/images/ms-devices-report_intro.png "Intro")
 
