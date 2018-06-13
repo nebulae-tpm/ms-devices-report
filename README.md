@@ -66,6 +66,12 @@ Gets the runtime threshold values used to generate CPU, RAM, Volumes and tempera
 Backends are defined processes within a docker container.  
 Each process is responsible to build, run and maintain itself.  
 
+Each BackEnd has the following running commands:
+  * npm start: executes main program
+  * npm run prepare: execute maintenance routines such DB indexes creation
+  * npm run sync-state:  syncs backend state by reading all missing Events from the event-store
+  * npm test: runs unit tests
+
 ## Recepcionist <a name="backend_recepcionist"></a>
 Embedded devices sends reports all the time, throught the IoT MQTT service, detailing current status (Eg. CPU, RAM, MEM, IPs) and events (Eg. Location, voltage peaks).  The recepcionist gathers these reports, uncompress them and push them to the event store so it can be available to this and any other microservice.
 
@@ -241,6 +247,7 @@ Event sourcing events this Micro-BackEnd is subscribed to or is publishing
 
 # Prepare development environment <a name="prepare_dev_env"></a>
 
+![Development environment](docs/images/ms-devices-report-dev-env.png "Dev_environment")
 
 # License <a name="license"></a>
 
