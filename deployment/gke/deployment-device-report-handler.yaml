@@ -51,7 +51,7 @@ spec:
         - name: DEVICE_ALARM_TEMPERATURE_MAX
           value: '60'
         - name: DEVICE_ALARM_CPU_USAGE_PERCENTAGE_MAX
-          value: '50'
+          value: '150'
         - name: DEVICE_ALARM_RAM_USAGE_PERCENTAGE_MAX
           value: '70'
         - name: DEVICE_ALARM_VOLUME_USAGE_PERCENTAGE_MAX

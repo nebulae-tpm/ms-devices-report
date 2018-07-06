@@ -248,8 +248,16 @@ Event sourcing events this Micro-BackEnd is subscribed to or is publishing
   * DeviceConnected: Device connected or dinsconnected reported/changed
 
 # Prepare development environment <a name="prepare_dev_env"></a>
+MicroServices are Cloud Native Applications meaning that building a develpoment enviroment is not an out-of-the-box feature.  NebulaE have implemented a set of tools and techniques to easy the environment construction.  The main idea is to be able to develop and test the MicroService in a fully isolated manner. 
+
+## Overview
 
 ![Development environment](docs/images/ms-devices-report-dev-env.png "Dev_environment")
+
+### Docker Compose
+(under construction)
+
+
 
 # License <a name="license"></a>
 
