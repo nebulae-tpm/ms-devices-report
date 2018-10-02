@@ -47,8 +47,6 @@ spec:
         resources:
           requests:
             cpu: "50m"
-          limits:
-            cpu: "100m"
       volumes:
       - name: dev-rep-mongo-persistent-storage
         persistentVolumeClaim:
