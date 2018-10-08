@@ -7,15 +7,13 @@ spec:
   selector:
     matchLabels:
       app: dev-rep-handler
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:
         app: dev-rep-handler
     spec:      
       containers:
-      - image: nebulaetpm/devices-report.backend.devices-report-handler:0.1.18
+      - image: nebulaetpm/devices-report.backend.devices-report-handler:0.1.19
         name: dev-rep-handler
         volumeMounts:
         - name: google-application-credentials
