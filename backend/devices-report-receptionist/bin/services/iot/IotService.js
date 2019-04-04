@@ -37,7 +37,10 @@ class IotService {
 
     processIncomingMessages$() {
         const streamSource = this.broker.getMessageListener$([process.env.IOT_BROKER_TOPIC])
-            .map(msg => msg.data)
+            .map(msg => {
+                console.log('processIncomingMessages => ', msg);
+                return msg.data;
+            })
             .filter(data => data && data.state && data.state.sDv);
         return IoTServiceHelper.ensureOrderedStream$(streamSource)
             .concatMap(data => deviceGeneralInformation.handleReportDeviceGeneralInformation$(data));
