@@ -38,7 +38,7 @@ class IotService {
     processIncomingMessages$() {
         const streamSource = this.broker.getMessageListener$([process.env.IOT_BROKER_TOPIC])
             .map(msg => {
-                console.log('processIncomingMessages => ', msg);
+                console.log('processIncomingMessages => ', JSON.stringify(msg.data));
                 return msg.data;
             })
             .filter(data => data && data.state && data.state.sDv);
